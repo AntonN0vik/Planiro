@@ -2,6 +2,7 @@
 
 public class TaskEntity
 {
+    public Guid Id { get; set; }
     public string? Title { get; set; }
 
     public string? Description { get; set; }
@@ -15,8 +16,7 @@ public class TaskEntity
     public Guid UserId;
     
     public UserEntity? User { get; set; }
-    
-    public Guid TeamId { get; set; } // чтобы установить полное соотвествие между задачей и доской
-    
-    public TeamEntity? Team { get; set; }
+  
+    public Guid TeamId;
+    public TeamEntity? Team;
 }
