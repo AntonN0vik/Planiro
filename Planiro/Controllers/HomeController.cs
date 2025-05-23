@@ -4,28 +4,49 @@ using Planiro.Models;
 
 namespace Planiro.Controllers;
 
-public class HomeController : Controller
+[ApiController]
+[Route("[controller]")]
+public class AppController : ControllerBase
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    // API endpoint
+    [HttpGet("api/data")]
+    public IActionResult GetData()
     {
-        _logger = logger;
+        return Ok(new { Message = "Данные API" });
     }
 
-    public IActionResult Index()
+    // SPA fallback
+    [HttpGet("{*url}")]
+    public IActionResult Spa()
     {
-        return View();
-    }
-
-    public IActionResult Privacy()
-    {
-        return View();
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        return PhysicalFile(
+            Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "index.html"),
+            "text/html"
+        );
     }
 }
+// public class HomeController : Controller
+// {
+//     private readonly ILogger<HomeController> _logger;
+//
+//     public HomeController(ILogger<HomeController> logger)
+//     {
+//         _logger = logger;
+//     }
+//
+//     public IActionResult Index()
+//     {
+//         return View();
+//     }
+//
+//     public IActionResult Privacy()
+//     {
+//         return View();
+//     }
+//
+//     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+//     public IActionResult Error()
+//     {
+//         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+//     }
+// }
