@@ -15,4 +15,8 @@ public class TaskEntity
     public Guid UserId;
     
     public UserEntity? User { get; set; }
+    
+    public Guid TeamId { get; set; } // чтобы установить полное соотвествие между задачей и доской
+    
+    public TeamEntity? Team { get; set; }
 }
