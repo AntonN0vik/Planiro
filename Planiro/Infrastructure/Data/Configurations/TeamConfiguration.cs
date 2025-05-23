@@ -13,6 +13,6 @@ public class TeamConfiguration : IEntityTypeConfiguration<TeamEntity>
         builder.HasMany(x => x.Users)
             .WithMany(x => x.Teams)
             .UsingEntity(j => j.ToTable("TeamUsers"));
-        ;
+        
     }
 }

@@ -8,4 +8,9 @@ public class PlaniroDbContext : DbContext
     public DbSet<UserEntity>? Users { get; set; }
     public DbSet<TeamEntity>? Teams { get; set; }
     public DbSet<TaskEntity>? Tasks { get; set; }
+
+    public PlaniroDbContext(DbContextOptions<PlaniroDbContext> options): base(options)
+    {
+        
+    }
 }

@@ -13,4 +13,5 @@ public class UserEntity
     [MaxLength(512)] public string? PasswordHash { get; set; }
     public ICollection<TeamEntity>? Teams { get; set; }
     public ICollection<TaskEntity>? Tasks { get; set; }
+   
 }
