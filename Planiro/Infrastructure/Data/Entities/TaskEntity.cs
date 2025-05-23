@@ -16,6 +16,7 @@ public class TaskEntity
     public Guid UserId;
     
     public UserEntity? User { get; set; }
+  
     public Guid TeamId;
     public TeamEntity? Team;
 }
