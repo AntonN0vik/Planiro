@@ -1,5 +1,7 @@
-
+using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Planiro.Infrastructure.Data.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 // Добавляем поддержку статических файлов SPA
@@ -8,7 +10,13 @@ builder.Services.AddSpaStaticFiles(configuration =>
 {
     configuration.RootPath = "planiro/build";
 });
-
+// Конфигурация базы данных PostgreSQL
+builder.Services.AddDbContext<PlaniroDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
+    // Для логирования SQL-запросов (опционально)
+    options.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
