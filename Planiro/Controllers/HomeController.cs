@@ -5,17 +5,25 @@ using Planiro.Models;
 namespace Planiro.Controllers;
 
 [ApiController]
-[Route("[controller]")]
-public class AppController : ControllerBase
+[Route("api")]
+public class ApiController : ControllerBase
 {
-    // API endpoint
-    [HttpGet("api/data")]
-    public IActionResult GetData()
+    
+    [HttpPost("register")]
+    public IActionResult Register([FromBody] RegisterRequest request)
     {
-        return Ok(new { Message = "Данные API" });
+        // TODO валидаци и логика регистрации из APLICATION
+        return Ok(new { Message = "regiser sucess" });
     }
-
-    // SPA fallback
+    
+    [HttpPost("login")]
+    public IActionResult Login([FromBody] LoginRequest request)
+    {
+        // TODO валидаци и логика входа из APLICATION
+        return Ok(new { Message = "login success" });
+    }
+    
+    // SPA fallback (должен быть последним)
     [HttpGet("{*url}")]
     public IActionResult Spa()
     {
@@ -25,6 +33,7 @@ public class AppController : ControllerBase
         );
     }
 }
+
 // public class HomeController : Controller
 // {
 //     private readonly ILogger<HomeController> _logger;

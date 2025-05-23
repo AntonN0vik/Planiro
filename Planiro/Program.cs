@@ -6,6 +6,18 @@ using Planiro.Infrastructure.Data.Configurations;
 var builder = WebApplication.CreateBuilder(args);
 // Добавляем поддержку статических файлов SPA
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowFrontend",
+        policy => {
+            policy.WithOrigins("http://localhost:3000") // Адрес вашего React-приложения
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
+
+
 builder.Services.AddSpaStaticFiles(configuration =>
 {
     configuration.RootPath = "planiro/build";
