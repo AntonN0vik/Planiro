@@ -2,6 +2,7 @@
 
 public class TaskEntity
 {
+    public Guid Id { get; set; }
     public string? Title { get; set; }
 
     public string? Description { get; set; }
@@ -15,4 +16,6 @@ public class TaskEntity
     public Guid UserId;
     
     public UserEntity? User { get; set; }
+    public Guid TeamId;
+    public TeamEntity? Team;
 }
