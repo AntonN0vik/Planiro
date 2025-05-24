@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Planiro.Application.Services;
+using Planiro.Domain.IRepositories;
 using Planiro.Infrastructure.Data.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +32,14 @@ builder.Services.AddDbContext<PlaniroDbContext>(options =>
     // Для логирования SQL-запросов (опционально)
     options.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
 });
+builder.Services.AddScoped<ITeamRepository, TeamRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Регистрация сервисов
+builder.Services.AddScoped<TeamAuthorizationService>();
+builder.Services.AddScoped<UserAuthorizationService>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

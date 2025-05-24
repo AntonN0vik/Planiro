@@ -6,36 +6,41 @@ namespace Planiro.Application.Services;
 
 public class TeamAuthorizationService
 {
-    public static void RegisterTeam(ITeamRepository teamRepository,
-        IUserRepository userRepository,
-        CreateTeamRequest createTeamRequest)
+    private readonly ITeamRepository _teamRepository;
+    private readonly IUserRepository _userRepository;
+
+    public TeamAuthorizationService(
+        ITeamRepository teamRepository,
+        IUserRepository userRepository)
+    {
+        _teamRepository = teamRepository;
+        _userRepository = userRepository;
+    }
+
+    public void RegisterTeam(CreateTeamRequest createTeamRequest)
     {
         var teamId = Guid.NewGuid();
         var joinCode = RandomCodeGenerator.GenerateCode();
-
-        var teamleadId = userRepository.GetUserByName(createTeamRequest.Username).Id;
-        teamRepository.SaveTeam(new Team(teamId, joinCode, default, teamleadId));
+        var teamleadId = _userRepository.GetUserByName(createTeamRequest.Username).Id;
+        
+        _teamRepository.SaveTeam(new Team(teamId, joinCode, default, teamleadId));
     }
 
-    public static void AuthorizeTeam(ITeamRepository teamRepository, 
-        IUserRepository userRepository,
-        JoinTeamRequest joinRequest)
+    public void AuthorizeTeam(JoinTeamRequest joinRequest)
     {
         var username = joinRequest.Username;
         var joinCode = joinRequest.Code;
 
-        if (!teamRepository.IsJoinCodeValid(joinCode))
+        if (!_teamRepository.IsJoinCodeValid(joinCode))
             throw new ArgumentException("Invalid joinCode");
         
-        var user = userRepository.GetUserByName(username);
-        teamRepository.AddUser(user,  joinCode);
+        var user = _userRepository.GetUserByName(username);
+        _teamRepository.AddUser(user, joinCode);
     }
 
-    public static string GetJoinCode(ITeamRepository teamRepository,
-        IUserRepository userRepository,
-        CreateTeamRequest createTeamRequest)
+    public string GetJoinCode(CreateTeamRequest createTeamRequest)
     {
-        var userId = userRepository.GetUserByName(createTeamRequest.Username).Id;
-        return teamRepository.GetJoinCode(userId);
+        var userId = _userRepository.GetUserByName(createTeamRequest.Username).Id;
+        return _teamRepository.GetJoinCode(userId);
     }
 }
