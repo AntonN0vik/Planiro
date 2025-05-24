@@ -24,7 +24,7 @@ public class UserAuthorizationService
     {
         var passwordHashed = _passwordHasher.HashPassword(registerRequest.Password);
         var existingUser = await _userRepository.IsUsernameExistAsync(registerRequest.Username);
-        if (!existingUser)
+        if (existingUser)
             throw new ArgumentException("Username already exist");
 
         var userId = Guid.NewGuid();
@@ -42,7 +42,7 @@ public class UserAuthorizationService
         var password = registerRequest.Password;
         
         var checkedPassword = await _userRepository.CheckPasswordAsync(tempUsername, password);
-        if (!checkedPassword)
+        if (checkedPassword)
             throw new ArgumentException("Invalid username or password");
     }
 }
