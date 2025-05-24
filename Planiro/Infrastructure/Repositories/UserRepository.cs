@@ -43,11 +43,7 @@ public class UserRepository : IUserRepository
         if (entity == null)
             return null;
 
-        return new User(entity.Id, entity.FirstName ?? "", entity.LastName ?? "", entity.UserName ?? "")
-        {
-            Teams = entity.Teams?.Select(t => t.Id).ToList(),
-            Planners = entity.Tasks?.Select(t => t.Id).ToList()
-        };
+        return MapToDomain(entity);
     }
     
     public async Task SaveUserAsync(User user, string password)
@@ -89,11 +85,14 @@ public class UserRepository : IUserRepository
     
     private static User MapToDomain(UserEntity entity)
     {
-        return new User(entity.Id, entity.FirstName!, entity.LastName!, entity.UserName!)
-        {
-            Teams = entity.Teams?.Select(t => t.Id).ToList(),
-            Planners = entity.Tasks?.Select(t => t.Id).ToList()
-        };
+        return new User(
+            entity.Id,
+            entity.FirstName ?? "",
+            entity.LastName ?? "",
+            entity.UserName ?? "",
+            entity.Teams?.Select(t => t.Id).ToList(),
+            entity.Tasks?.Select(t => t.Id).ToList()
+            );
     }
 
     private static UserEntity MapToEntity(User user, string passwordHash)

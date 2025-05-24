@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Planiro.Application.Services;
 using Planiro.Domain.IRepositories;
 using Planiro.Infrastructure.Data.Configurations;
+using Planiro.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 // Добавляем поддержку статических файлов SPA
