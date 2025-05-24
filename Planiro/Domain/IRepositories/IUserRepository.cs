@@ -10,7 +10,7 @@ public interface IUserRepository
     public bool CheckPassword(string username, string password);
     public User GetUserByName(string username);
     
-    public void SaveUser(User user);
+    public void SaveUser(User user, string password);
     
     public void SaveTeams(ICollection<Team> teams);
     
