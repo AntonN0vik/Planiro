@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export default function App() {
+const Auth = ({ setIsAuthenticated }) => {
   const [isRegistering, setIsRegistering] = useState(true);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -12,6 +13,7 @@ export default function App() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -80,8 +82,8 @@ export default function App() {
 
     try {
       const endpoint = isRegistering
-          ? 'http://localhost:5036/api/register'
-          : 'http://localhost:5036/api/login';
+          ? 'http://localhost:5036/api/Auth/register'
+          : 'http://localhost:5036/api/Auth/login';
 
       const requestData = isRegistering
           ? {
@@ -107,6 +109,13 @@ export default function App() {
 
       if (!response.ok) {
         throw new Error(data.message || 'Ошибка сервера');
+      }
+
+      if (!isRegistering) {
+        setIsAuthenticated(true);
+        localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('username', formData.username); 
+        navigate('/dev-team');
       }
 
       setSuccessMessage(isRegistering
@@ -329,252 +338,8 @@ export default function App() {
             </form>
           </div>
         </div>
-
-        <style>
-          {`
-          * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          }
-
-          body {
-            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-          }
-
-          .auth-container {
-            width: 100%;
-            max-width: 900px;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: row;
-            background-color: #fff;
-          }
-
-          .auth-card {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-          }
-
-          .left-panel {
-            position: relative;
-            background: linear-gradient(135deg, #4f46e5, #3730a3);
-            color: white;
-            padding: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-          }
-
-          .left-panel .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transform: skewY(-12deg);
-            transform-origin: top left;
-            background: linear-gradient(135deg, #4f46e5, #3730a3);
-            z-index: 0;
-          }
-
-          .left-panel .content {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-            max-width: 300px;
-          }
-
-          .icon-wrapper {
-            width: 60px;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-          }
-
-          .icon-wrapper svg {
-            color: white;
-            width: 24px;
-            height: 24px;
-          }
-
-          .left-panel h2 {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
-          }
-
-          .left-panel p {
-            font-size: 14px;
-            margin-bottom: 20px;
-            opacity: 0.9;
-          }
-
-          .toggle-btn {
-            background: white;
-            color: #4f46e5;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-          }
-
-          .toggle-btn:hover {
-            background: #e0e7ff;
-          }
-
-          .right-panel {
-            flex: 1;
-            padding: 40px;
-            position: relative;
-          }
-
-          .right-panel h2 {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 30px;
-            color: #1f2937;
-          }
-
-          .auth-form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-          }
-
-          .form-group {
-            display: flex;
-            flex-direction: column;
-          }
-
-          .form-group label {
-            font-size: 14px;
-            margin-bottom: 6px;
-            color: #4b5563;
-          }
-
-          .form-group input {
-            padding: 12px 14px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-          }
-
-          .form-group input:focus {
-            outline: none;
-            border-color: #818cf8;
-            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
-          }
-
-          .input-error {
-            border-color: #ef4444;
-          }
-
-          .error-text {
-            color: #ef4444;
-            font-size: 12px;
-            margin-top: 4px;
-            display: block;
-          }
-
-          .btn-primary {
-            background: #4f46e5;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-          }
-
-          .btn-primary:hover {
-            background: #3730a3;
-          }
-
-          .btn-block {
-            width: 100%;
-          }
-
-          .toggle-link {
-            text-align: center;
-            margin-top: 10px;
-          }
-
-          .toggle-link button {
-            background: none;
-            border: none;
-            color: #4f46e5;
-            font-weight: 600;
-            cursor: pointer;
-          }
-
-          .success-modal {
-            position: absolute;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            animation: fadeIn 0.4s ease-in-out;
-            border-radius: 16px;
-          }
-
-          .success-content {
-            text-align: center;
-            padding: 30px;
-          }
-
-          .success-icon {
-            width: 60px;
-            height: 60px;
-            background: #dcfce7;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            color: #16a34a;
-          }
-
-          @keyframes fadeIn {
-            from {
-              opacity: 0;
-              transform: translateY(10px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-
-          @media (max-width: 768px) {
-            .auth-card {
-              flex-direction: column;
-            }
-          }
-        `}
-        </style>
       </div>
   );
-}
+};
+
+export default Auth;
