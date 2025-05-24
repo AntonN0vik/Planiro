@@ -1,10 +1,9 @@
 ﻿using Planiro.Domain.Entities;
+
 using Task = System.Threading.Tasks.Task;
-using TaskEntity = Planiro.Domain.Entities.Task;
+using TaskDomain = Planiro.Domain.Entities.Task;
 
 namespace Planiro.Domain.IRepositories;
-
-using Planiro.Domain;
 
 public interface ITeamRepository
 {

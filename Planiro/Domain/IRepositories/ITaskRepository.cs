@@ -1,14 +1,15 @@
 ﻿namespace Planiro.Domain.IRepositories;
+
 using Task = System.Threading.Tasks.Task;
-using TaskEntity = Planiro.Domain.Entities.Task;
-using Planiro.Domain;
+using TaskDomain = Planiro.Domain.Entities.Task;
+
 public interface ITaskRepository
 {
-    Task<ICollection<TaskEntity>> GetTaskByUserIdAsync(Guid userId);
+    Task<ICollection<TaskDomain>> GetTaskByUserIdAsync(Guid userId);
     
-    Task<ICollection<TaskEntity>> GetTaskByTeamIdAsync(Guid teamId);
+    Task<ICollection<TaskDomain>> GetTaskByTeamIdAsync(Guid teamId);
     
-    Task SaveTaskAsync(TaskEntity task);
+    Task SaveTaskAsync(TaskDomain task);
     
-    Task RemoveTaskAsync(TaskEntity task);
+    Task RemoveTaskAsync(TaskDomain task);
 }
