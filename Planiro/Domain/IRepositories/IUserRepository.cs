@@ -1,6 +1,6 @@
 ﻿using Planiro.Domain.Entities;
 using Task = System.Threading.Tasks.Task;
-using TaskEntity = Planiro.Domain.Entities.Task;
+using TaskDomain = Planiro.Domain.Entities.Task;
 
 namespace Planiro.Domain.IRepositories;
 
@@ -12,7 +12,7 @@ public interface IUserRepository
     Task<User?> GetUserByNameAsync(string username);
     Task SaveUserAsync(User user, string password);
     Task SaveTeamsAsync(ICollection<Team> teams);
-    Task SaveTasksAsync(ICollection<Task> tasks);
+    Task SaveTasksAsync(ICollection<TaskDomain> tasks);
     Task AddTeamAsync(Team team);
     Task RemoveTeamAsync(Team team);
     Task AddTaskAsync(Task task);

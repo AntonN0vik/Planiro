@@ -23,14 +23,15 @@ public class UserAuthorizationService
     {
         var passwordHashed = _passwordHasher.HashPassword(registerRequest.Password);
         
-        if (_userRepository.IsUsernameExist(registerRequest.Username))
+        if (!_userRepository.IsUsernameExistAsync(registerRequest.Username).Result)
             throw new ArgumentException("Username already exist");
 
         var userId = Guid.NewGuid();
-        _userRepository.SaveUser(new User(userId, 
+        _userRepository.SaveUserAsync(new User(userId, 
                 registerRequest.FirstName,
                 registerRequest.LastName,
-                registerRequest.Username), 
+                registerRequest.Username, 
+                new List<Guid>(), new List<Guid>()), 
             passwordHashed);
     }
 
@@ -39,7 +40,7 @@ public class UserAuthorizationService
         var tempUsername = registerRequest.Username;
         var password = registerRequest.Password;
 
-        if (!_userRepository.CheckPassword(tempUsername, password))
+        if (!_userRepository.CheckPasswordAsync(tempUsername, password).Result)
             throw new ArgumentException("Invalid username or password");
     }
 }

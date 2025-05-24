@@ -12,7 +12,7 @@ public interface ITeamRepository
 
     Task<ICollection<User>> GetUsersAsync(string joinCode);
     
-    Task<string?> GetJoinCodeAsync(Guid teamleadId);
+    Task<string> GetJoinCodeAsync(Guid teamleadId);
     
     Task<User?> GetTeamleadByIdAsync(string joinCode);
     // ищет в бд команду по коду вступления, берет id тимлида,

@@ -11,11 +11,14 @@ public class User
 
     public ICollection<Guid>? Planners { get; set; }
 
-    public User(Guid id, string firstName, string lastName, string userName)
+    public User(Guid id, string firstName, string lastName, string userName, 
+        ICollection<Guid>? teams, ICollection<Guid>? planners)
     {
         Id = id;
         FirstName = firstName;
         LastName = lastName;
         UserName = userName;
+        Teams = teams;
+        Planners = planners;
     }
 }

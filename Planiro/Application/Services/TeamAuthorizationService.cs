@@ -21,9 +21,10 @@ public class TeamAuthorizationService
     {
         var teamId = Guid.NewGuid();
         var joinCode = RandomCodeGenerator.GenerateCode();
-        var teamleadId = _userRepository.GetUserByName(createTeamRequest.Username).Id;
-        
-        _teamRepository.SaveTeam(new Team(teamId, joinCode, default, teamleadId));
+        var result = _userRepository.GetUserByNameAsync(createTeamRequest.Username).Result;
+        if (result == null) throw new ArgumentException("Invalid username");
+        var teamleadId = result.Id;
+        _teamRepository.SaveTeamAsync(new Team(teamId, joinCode, new List<Guid>(), teamleadId));
     }
 
     public void AuthorizeTeam(JoinTeamRequest joinRequest)
@@ -31,16 +32,19 @@ public class TeamAuthorizationService
         var username = joinRequest.Username;
         var joinCode = joinRequest.Code;
 
-        if (!_teamRepository.IsJoinCodeValid(joinCode))
+        if (!_teamRepository.IsJoinCodeValidAsync(joinCode).Result)
             throw new ArgumentException("Invalid joinCode");
         
-        var user = _userRepository.GetUserByName(username);
-        _teamRepository.AddUser(user, joinCode);
+        var user = _userRepository.GetUserByNameAsync(username).Result;
+        if (user != null) 
+            _teamRepository.AddUserAsync(user, joinCode);
     }
 
-    public string GetJoinCode(CreateTeamRequest createTeamRequest)
+    public Task<string> GetJoinCode(CreateTeamRequest createTeamRequest)
     {
-        var userId = _userRepository.GetUserByName(createTeamRequest.Username).Id;
-        return _teamRepository.GetJoinCode(userId);
+        var result = _userRepository.GetUserByNameAsync(createTeamRequest.Username).Result;
+        if (result == null) throw new ArgumentException("Can't find team with current joinCode");
+        var userId = result.Id;
+        return _teamRepository.GetJoinCodeAsync(userId);
     }
 }
