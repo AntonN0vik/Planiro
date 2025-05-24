@@ -1,26 +1,20 @@
 ﻿using Planiro.Domain.Entities;
-using Task = Planiro.Domain.Entities.Task;
+using Task = System.Threading.Tasks.Task;
+using TaskEntity = Planiro.Domain.Entities.Task;
 
 namespace Planiro.Domain.IRepositories;
 
 
 public interface IUserRepository
 {
-    public bool IsUsernameExist(string username);
-    public bool CheckPassword(string username, string password);
-    public User GetUserByName(string username);
-    
-    public void SaveUser(User user, string password);
-    
-    public void SaveTeams(ICollection<Team> teams);
-    
-    public void SaveTasks(ICollection<Task> tasks);
-    
-    public void AddTeam(Team team);
-    
-    public void RemoveTeam(Team team);
-    
-    public void AddTask(Task task);
-    
-    public void RemoveTask(Task task);
+    Task<bool> IsUsernameExistAsync(string username);
+    Task<bool> CheckPasswordAsync(string username, string password);
+    Task<User?> GetUserByNameAsync(string username);
+    Task SaveUserAsync(User user, string password);
+    Task SaveTeamsAsync(ICollection<Team> teams);
+    Task SaveTasksAsync(ICollection<Task> tasks);
+    Task AddTeamAsync(Team team);
+    Task RemoveTeamAsync(Team team);
+    Task AddTaskAsync(Task task);
+    Task RemoveTaskAsync(Task task);
 }
