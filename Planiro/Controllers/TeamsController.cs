@@ -19,8 +19,7 @@ public class TeamsController : ControllerBase
     {
         try
         {
-            await _teamService.RegisterTeam(request);
-            var code = await _teamService.GetJoinCode(request);
+            var code = await _teamService.RegisterTeam(request);
             
             return Ok(new
             {
