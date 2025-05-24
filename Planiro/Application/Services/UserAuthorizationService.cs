@@ -1,5 +1,6 @@
 ﻿using Planiro.Domain.Entities;
 using Planiro.Domain.IRepositories;
+using Task = System.Threading.Tasks.Task;
 
 namespace Planiro.Application.Services;
 
@@ -19,15 +20,15 @@ public class UserAuthorizationService
         _passwordHasher = passwordHasher;
     }
 
-    public void RegisterUser(RegisterRequest registerRequest)
+    public async Task RegisterUser(RegisterRequest registerRequest)
     {
         var passwordHashed = _passwordHasher.HashPassword(registerRequest.Password);
-        
-        if (!_userRepository.IsUsernameExistAsync(registerRequest.Username).Result)
+        var existingUser = await _userRepository.IsUsernameExistAsync(registerRequest.Username);
+        if (!existingUser)
             throw new ArgumentException("Username already exist");
 
         var userId = Guid.NewGuid();
-        _userRepository.SaveUserAsync(new User(userId, 
+        await _userRepository.SaveUserAsync(new User(userId, 
                 registerRequest.FirstName,
                 registerRequest.LastName,
                 registerRequest.Username, 
@@ -35,12 +36,13 @@ public class UserAuthorizationService
             passwordHashed);
     }
 
-    public  void AuthorizeUser(LoginRequest registerRequest)
+    public async void AuthorizeUser(LoginRequest registerRequest)
     {
         var tempUsername = registerRequest.Username;
         var password = registerRequest.Password;
-
-        if (!_userRepository.CheckPasswordAsync(tempUsername, password).Result)
+        
+        var checkedPassword = await _userRepository.CheckPasswordAsync(tempUsername, password);
+        if (!checkedPassword)
             throw new ArgumentException("Invalid username or password");
     }
 }
