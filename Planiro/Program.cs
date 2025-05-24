@@ -32,13 +32,11 @@ builder.Services.AddDbContext<PlaniroDbContext>(options =>
     // Для логирования SQL-запросов (опционально)
     options.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
 });
+builder.Services.AddScoped<UserAuthorizationService>();
+builder.Services.AddScoped<TeamAuthorizationService>();
+builder.Services.AddScoped<PasswordHasher>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-// Регистрация сервисов
-builder.Services.AddScoped<TeamAuthorizationService>();
-builder.Services.AddScoped<UserAuthorizationService>();
-
 
 var app = builder.Build();
 

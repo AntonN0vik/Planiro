@@ -1,6 +1,7 @@
 ﻿using Planiro.Domain.Entities;
 using Planiro.Domain.IRepositories;
 using Planiro.Models;
+using Task = System.Threading.Tasks.Task;
 
 namespace Planiro.Application.Services;
 
@@ -17,7 +18,7 @@ public class TeamAuthorizationService
         _userRepository = userRepository;
     }
 
-    public async void RegisterTeam(CreateTeamRequest createTeamRequest)
+    public async Task RegisterTeam(CreateTeamRequest createTeamRequest)
     {
         var teamId = Guid.NewGuid();
         var joinCode = RandomCodeGenerator.GenerateCode();
@@ -27,7 +28,7 @@ public class TeamAuthorizationService
         await _teamRepository.SaveTeamAsync(new Team(teamId, joinCode, new List<Guid>(), teamleadId));
     }
 
-    public async void AuthorizeTeam(JoinTeamRequest joinRequest)
+    public async Task AuthorizeTeam(JoinTeamRequest joinRequest)
     {
         var username = joinRequest.Username;
         var joinCode = joinRequest.Code;
@@ -37,8 +38,10 @@ public class TeamAuthorizationService
             throw new ArgumentException("Invalid joinCode");
         
         var user = await _userRepository.GetUserByNameAsync(username);
-        if (user != null) 
-            await _teamRepository.AddUserAsync(user, joinCode);
+        if (user == null)
+            throw new ArgumentException($"User '{joinRequest.Username}' not found", nameof(joinRequest.Username));
+
+        await _teamRepository.AddUserAsync(user, joinRequest.Code);
     }
 
     public async Task<string> GetJoinCode(CreateTeamRequest createTeamRequest)

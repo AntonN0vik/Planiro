@@ -36,7 +36,7 @@ public class UserAuthorizationService
             passwordHashed);
     }
 
-    public async void AuthorizeUser(LoginRequest registerRequest)
+    public async Task AuthorizeUser(LoginRequest registerRequest)
     {
         var tempUsername = registerRequest.Username;
         var password = registerRequest.Password;
