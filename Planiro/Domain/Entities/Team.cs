@@ -9,4 +9,13 @@ public class Team
     public ICollection<Guid>? Collaborators { get; set; }
     
     public Guid TeamleadId { get; set; }
+    
+    public Team(Guid id, string? joinCode, ICollection<Guid>? collaborators, Guid teamleadId)
+    {
+        this.Id = id;
+        this.JoinCode = joinCode;
+        this.Collaborators = collaborators;
+        this.TeamleadId = teamleadId;
+    }
+
 }
