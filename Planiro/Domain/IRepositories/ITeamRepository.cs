@@ -1,4 +1,6 @@
 ﻿using Planiro.Domain.Entities;
+using Task = System.Threading.Tasks.Task;
+using TaskEntity = Planiro.Domain.Entities.Task;
 
 namespace Planiro.Domain.IRepositories;
 
@@ -6,19 +8,19 @@ using Planiro.Domain;
 
 public interface ITeamRepository
 {
-    public bool IsJoinCodeValid(string joinCode);
+    Task<bool> IsJoinCodeValidAsync(string joinCode);
 
-    public ICollection<User> GetUsers(string joinCode);
+    Task<ICollection<User>> GetUsersAsync(string joinCode);
     
-    public string GetJoinCode(Guid teamleadId);
+    Task<string?> GetJoinCodeAsync(Guid teamleadId);
     
-    public User GetTeamleadById(string joinCode); 
+    Task<User?> GetTeamleadByIdAsync(string joinCode);
     // ищет в бд команду по коду вступления, берет id тимлида,
     // идет в таблицу юзеров и находит тимлида
+
+    Task SaveTeamAsync(Team team);
     
-    public void SaveTeam(Team team);
+    Task AddUserAsync(User user, string joinCode);
     
-    public void AddUser(User user, string joinCode);
-    
-    public void RemoveUser(User user,  string joinCode);
+    Task RemoveUserAsync(User user, string joinCode);
 }
