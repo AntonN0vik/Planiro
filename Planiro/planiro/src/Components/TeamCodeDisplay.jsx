@@ -1,9 +1,11 @@
 ﻿import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-const TeamCodeDisplay = ({ teamCode }) => {
+const TeamCodeDisplay = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [isCopied, setIsCopied] = useState(false);
+    const teamCode = location.state?.teamCode || 'XXXX-XXXX';
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(teamCode);
@@ -14,7 +16,6 @@ const TeamCodeDisplay = ({ teamCode }) => {
     return (
         <div className="auth-container">
             <div className="auth-card">
-                {/* Левая панель */}
                 <div className="left-panel">
                     <div className="overlay"></div>
                     <div className="content">
@@ -35,13 +36,10 @@ const TeamCodeDisplay = ({ teamCode }) => {
                             </svg>
                         </div>
                         <h2>Команда создана!</h2>
-                        <p>
-                            Используйте этот код для доступа к вашей команде
-                        </p>
+                        <p>Используйте этот код для доступа к вашей команде</p>
                     </div>
                 </div>
 
-                {/* Правая панель */}
                 <div className="right-panel">
                     <div className="auth-form">
                         <h2>Код вашей команды</h2>
@@ -58,7 +56,7 @@ const TeamCodeDisplay = ({ teamCode }) => {
                             onClick={() => navigate('/dev-team')}
                             className="btn-primary btn-block"
                         >
-                            Войти в команду
+                            Вернуться в команду
                         </button>
                     </div>
                 </div>

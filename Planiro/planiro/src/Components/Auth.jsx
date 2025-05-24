@@ -82,8 +82,8 @@ const Auth = ({ setIsAuthenticated }) => {
 
     try {
       const endpoint = isRegistering
-          ? 'http://localhost:5036/api/register'
-          : 'http://localhost:5036/api/login';
+          ? 'http://localhost:5036/api/Auth/register'
+          : 'http://localhost:5036/api/Auth/login';
 
       const requestData = isRegistering
           ? {
@@ -114,6 +114,7 @@ const Auth = ({ setIsAuthenticated }) => {
       if (!isRegistering) {
         setIsAuthenticated(true);
         localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('username', formData.username); 
         navigate('/dev-team');
       }
 

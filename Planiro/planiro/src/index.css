@@ -260,3 +260,31 @@ body {
         flex-direction: column;
     }
 }
+
+.code-display {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 30px 0;
+}
+
+.code {
+    font-size: 24px;
+    letter-spacing: 2px;
+    padding: 12px 20px;
+    background: #f3f4f6;
+    border-radius: 8px;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.copy-btn {
+    width: auto;
+    padding: 12px 20px;
+}
+
+.team-actions {
+    margin-top: 40px;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 30px;
+}

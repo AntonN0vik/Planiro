@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Auth from './Auth';
-import DevTeamPage from './DevTeamPage';
-import TeamCodeDisplay from './TeamCodeDisplay';
+import Auth from './Components/Auth';
+import DevTeamPage from './Components/DevTeamPage';
+import TeamCodeDisplay from './Components/TeamCodeDisplay';
 import { useState, useEffect } from 'react';
 
 function App() {
