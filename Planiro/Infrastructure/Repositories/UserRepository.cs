@@ -43,47 +43,17 @@ public class UserRepository : IUserRepository
         if (entity == null)
             return null;
 
-        return MapToDomain(entity);
+        return MapUserToDomain(entity);
     }
     
     public async Task SaveUserAsync(User user, string password)
     {
-        var entity = MapToEntity(user, password);
+        var entity = MapUserToEntity(user, password);
         await _dbContext.Users!.AddAsync(entity);
         await _dbContext.SaveChangesAsync();
     }
     
-    public Task SaveTeamsAsync(ICollection<Team> teams)
-    {
-        throw new NotImplementedException();
-    }
-    
-    public Task SaveTasksAsync(ICollection<TaskDomain> tasks)
-    {
-        throw new NotImplementedException();
-    }
-    
-    public Task AddTeamAsync(Team team)
-    {
-        throw new NotImplementedException();
-    }
-    
-    public Task RemoveTeamAsync(Team team)
-    {
-        throw new NotImplementedException();
-    }
-    
-    public Task AddTaskAsync(Task task)
-    {
-        throw new NotImplementedException();
-    }
-    
-    public Task RemoveTaskAsync(Task task)
-    {
-        throw new NotImplementedException();
-    }
-    
-    private static User MapToDomain(UserEntity entity)
+    public static User MapUserToDomain(UserEntity entity)
     {
         return new User(
             entity.Id,
@@ -95,7 +65,7 @@ public class UserRepository : IUserRepository
             );
     }
 
-    private static UserEntity MapToEntity(User user, string passwordHash)
+    public static UserEntity MapUserToEntity(User user, string passwordHash)
     {
         return new UserEntity
         {
