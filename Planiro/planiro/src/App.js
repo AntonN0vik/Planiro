@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Auth from './Components/Auth';
 import DevTeamPage from './Components/DevTeamPage';
 import TeamCodeDisplay from './Components/TeamCodeDisplay';
+import TeamBoard from './Components/TeamBoard';
 import { useState, useEffect } from 'react';
 
 function App() {
@@ -42,6 +43,17 @@ function App() {
                 <Route
                     path="/*"
                     element={<Navigate to={isAuthenticated ? "/dev-team" : "/auth"} />}
+                />
+                // В App.js замените проблемную строку:
+                <Route
+                    path="/team-board"
+                    element={
+                        isAuthenticated ? (
+                            <TeamBoard isTeamLead={localStorage.getItem('isTeamLead') === 'true'} />
+                        ) : (
+                            <Navigate to="/auth" />
+                        )
+                    }
                 />
             </Routes>
         </Router>
