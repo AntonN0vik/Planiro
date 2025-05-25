@@ -24,7 +24,10 @@ const DevTeamPage = () => {
 
             const data = await response.json();
 
-            if (!response.ok) throw new Error(data.message);
+            if (!response.ok) 
+                throw new Error(data.message);
+
+            localStorage.setItem('isTeamLead', 'true');
 
             navigate('/team-code', { state: { teamCode: data.code } });
         } catch (error) {
@@ -51,7 +54,10 @@ const DevTeamPage = () => {
             const data = await response.json();
             if (!response.ok) throw new Error(data.message);
 
-            alert('Успешное подключение к команде!');
+            // Сохраняем ID команды и переходим на доску
+            localStorage.setItem('teamId', data.teamId);
+            navigate('/team-board');
+
         } catch (error) {
             setError('Ошибка подключения: ' + error.message);
         }
