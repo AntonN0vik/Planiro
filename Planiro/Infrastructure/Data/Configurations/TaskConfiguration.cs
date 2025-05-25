@@ -8,11 +8,12 @@ public class TaskConfiguration : IEntityTypeConfiguration<TaskEntity>
 {
     public void Configure(EntityTypeBuilder<TaskEntity> builder)
     {
-        builder.HasKey(x => x.Id);
-        builder.HasOne(x => x.User)
-            .WithMany(x => x.Tasks)
-            .HasForeignKey(x => x.UserId)
-            .IsRequired() // Если задача не может существовать без пользователя
-            .OnDelete(DeleteBehavior.Cascade); // Опционально: поведение при удалении;;
+        builder.HasKey(t => t.Id);
+        
+        // Связь с Planer (Many Tasks -> 1 Planer)
+        builder.HasOne(t => t.Planer)
+            .WithMany(p => p.ToDoTasks) // Выберите нужную коллекцию
+            .HasForeignKey(t => t.PlanerId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

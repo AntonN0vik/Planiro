@@ -8,8 +8,18 @@ public class UserConfiguration: IEntityTypeConfiguration<UserEntity>
 {
     public void Configure(EntityTypeBuilder<UserEntity> builder)
     {
-        builder.HasKey(x => x.Id);
-        builder.HasMany(x => x.Teams);
+        builder.HasKey(u => u.Id);
+
+        // Связь с Planer (1 User -> Many Planers)
+        builder.HasMany(u => u.Planers)
+            .WithOne(p => p.User)
+            .HasForeignKey(p => p.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Связь Many-to-Many с Team
+        builder.HasMany(u => u.Teams)
+            .WithMany(t => t.Users)
+            .UsingEntity(j => j.ToTable("TeamUsers"));
         
     }
 }

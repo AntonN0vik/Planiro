@@ -13,10 +13,6 @@ public class TaskEntity
     
     public bool IsApproved { get; set; } = false;
     
-    public Guid UserId;
-    
-    public UserEntity? User { get; set; }
-  
-    public Guid TeamId;
-    public TeamEntity? Team;
+    public Guid PlanerId;
+    public PlanerEntity Planer { get; set; }
 }
