@@ -22,7 +22,7 @@ public class TeamAuthorizationService
     {
         var teamId = Guid.NewGuid();
         var joinCode = RandomCodeGenerator.GenerateCode();
-        var result = await _userRepository.GetUserByNameAsync(createTeamRequest.Username);
+        var result = await _userRepository.GetUserByUserNameAsync(createTeamRequest.Username);
         if (result == null) throw new ArgumentException("Invalid username");
         var teamleadId = result.Id;
         await _teamRepository.SaveTeamAsync(new Team(teamId, joinCode, new List<Guid>(), teamleadId));
@@ -38,7 +38,7 @@ public class TeamAuthorizationService
         if (!result)
             throw new ArgumentException("Invalid joinCode");
         
-        var user = await _userRepository.GetUserByNameAsync(username);
+        var user = await _userRepository.GetUserByUserNameAsync(username);
         if (user == null)
             throw new ArgumentException($"User '{joinRequest.Username}' not found", nameof(joinRequest.Username));
 

@@ -28,7 +28,7 @@ namespace Planiro.Application.Services
         public async Task JoinTeamAsync(string joinCode, Guid userId)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
-            await _teamRepository.AddUserAsync(user, joinCode);
+            await _teamRepository.AddUserAsync(user, userId);
         }
 
         public async Task<IEnumerable<User>> GetTeamMembersAsync(string joinCode)
@@ -39,7 +39,7 @@ namespace Planiro.Application.Services
         public async Task RemoveMemberAsync(string joinCode, Guid userId)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
-            await _teamRepository.RemoveUserAsync(user, joinCode);
+            await _teamRepository.RemoveUserAsync(user, userId);
         }
     }
 }

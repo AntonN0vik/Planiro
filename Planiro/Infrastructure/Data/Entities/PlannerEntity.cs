@@ -1,8 +1,8 @@
 ﻿namespace Planiro.Infrastructure.Data.Entities;
 
-public class PlanerEntity
+public class PlannerEntity
 {
-    public Guid PlanerId { get; set; }
+    public Guid Id { get; set; }
     public UserEntity? User { get; set; }
     public Guid UserId { get; set; }
     public TeamEntity? Team { get; set; }

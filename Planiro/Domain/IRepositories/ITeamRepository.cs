@@ -9,7 +9,7 @@ public interface ITeamRepository
 {
     Task<bool> IsJoinCodeValidAsync(string joinCode);
 
-    Task<ICollection<User>> GetUsersAsync(string joinCode);
+    Task<ICollection<User>> GetUsersAsync(Guid teamId);
     
     Task<string> GetJoinCodeAsync(Guid teamleadId);
     
@@ -19,7 +19,7 @@ public interface ITeamRepository
 
     Task SaveTeamAsync(Team team);
     
-    Task AddUserAsync(User user, string joinCode);
+    Task AddUserAsync(User user, Guid teamId);
     
-    Task RemoveUserAsync(User user, string joinCode);
+    Task RemoveUserAsync(User user, Guid teamId);
 }

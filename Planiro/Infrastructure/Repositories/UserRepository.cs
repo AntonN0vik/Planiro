@@ -17,65 +17,45 @@ public class UserRepository : IUserRepository
     {
         _dbContext = dbContext;
     }
+    
+    public async Task<User> GetUserByIdAsync(Guid userId)
+    {
+        var entity = await _dbContext.Users!
+            .Include(u => u.Teams)
+            .Include(u => u.Planners)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+        
+        return Mappers.MapUserToDomain(entity);
+    }
 
-
-    public async Task<bool> IsUsernameExistAsync(string username)
+    public async Task<User> GetUserByUserNameAsync(string userName)
+    {
+        var entity = await _dbContext.Users!
+            .Include(u => u.Teams)
+            .Include(u => u.Planners)
+            .FirstOrDefaultAsync(u => u.UserName == userName);
+        
+        return Mappers.MapUserToDomain(entity);
+    }
+    
+    public async Task<bool> IsUsernameExistAsync(string userName)
     {
         return await _dbContext.Users!
-            .AnyAsync(u => u.UserName == username);
+            .AnyAsync(u => u.UserName == userName);
     }
     
-    public async Task<bool> CheckPasswordAsync(string username, string password)
+    public async Task<bool> CheckPasswordAsync(string userName, string password)
     {
-        var user = await _dbContext.Users!
-            .FirstOrDefaultAsync(u => u.UserName == username);
-        return user != null && user.PasswordHash == password;
-    }
-
-    
-    public async Task<User?> GetUserByNameAsync(string username)
-    {
-        var entity = await _dbContext.Users
-            .Include(u => u.Teams)
-            .Include(u => u.Tasks)
-            .FirstOrDefaultAsync(u => u.UserName == username);
-
-        if (entity == null)
-            return null;
-
-        return MapUserToDomain(entity);
+        var entity = await _dbContext.Users!
+            .FirstOrDefaultAsync(u => u.UserName == userName);
+        
+        return entity.PasswordHash == password;
     }
     
     public async Task SaveUserAsync(User user, string password)
     {
-        var entity = MapUserToEntity(user, password);
+        var entity = Mappers.MapUserToEntity(user, password);
         await _dbContext.Users!.AddAsync(entity);
         await _dbContext.SaveChangesAsync();
     }
-    
-    public static User MapUserToDomain(UserEntity entity)
-    {
-        return new User(
-            entity.Id,
-            entity.FirstName ?? "",
-            entity.LastName ?? "",
-            entity.UserName ?? "",
-            entity.Teams?.Select(t => t.Id).ToList(),
-            entity.Tasks?.Select(t => t.Id).ToList()
-            );
-    }
-
-    public static UserEntity MapUserToEntity(User user, string passwordHash)
-    {
-        return new UserEntity
-        {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            UserName = user.UserName,
-            PasswordHash = passwordHash
-            // Teams и Tasks будут устанавливаться отдельно при необходимости
-        };
-    }
-    
 }

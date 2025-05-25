@@ -17,81 +17,53 @@ public class TaskRepository : ITaskRepository
 		_dbContext = dbContext;
 	}
 	
-	private static TaskEntity MapToEntity(Domain.Entities.Task task)
+	public async Task<TaskDomain> GetTaskByIdAsync(Guid taskId)
 	{
-		return new TaskEntity
-		{
-			Id = task.Id,
-			Title = task.Title,
-			Description = task.Description,
-			Deadline = task.Deadline,
-			IsApproved = task.IsApproved,
-			State = task.State.ToString(),
-			UserId = task.PlannerId
-			// TeamId можно добавить, если понадобится
-		};
-	}
-
-	private static Domain.Entities.Task MapToDomain(TaskEntity entity)
-	{
-		Enum.TryParse(entity.State, out Domain.Entities.Task.States state);
-
-		return new Domain.Entities.Task
-		{
-			Id = entity.Id,
-			Title = entity.Title,
-			Description = entity.Description,
-			Deadline = entity.Deadline,
-			IsApproved = entity.IsApproved,
-			State = state,
-			PlannerId = entity.UserId
-		};
-	}
-
-	public async Task<ICollection<TaskDomain>> GetTaskByUserIdAsync(Guid userId)
-	{
-		var entities = await _dbContext.Tasks!
-			.Where(t => t.UserId == userId)
-			.ToListAsync();
-
-		return entities.Select(MapToDomain).ToList();
+		var entity = await _dbContext.Tasks!
+			.FirstOrDefaultAsync(u => u.Id == taskId);
+		return Mappers.MapTaskToDomain(entity);
 	}
 	
-	public async Task<ICollection<TaskDomain>> GetTaskByTeamIdAsync(Guid teamId)
+	public async Task<ICollection<TaskDomain>> GetTaskByUserIdAsync(Guid plannerId)
 	{
 		var entities = await _dbContext.Tasks!
-			.Where(t => t.TeamId == teamId)
+			.Where(t => t.PlannerId == plannerId)
 			.ToListAsync();
 
-		return entities.Select(MapToDomain).ToList();
+		return entities.Select(Mappers.MapTaskToDomain).ToList();
 	}
 	
 	public async Task SaveTaskAsync(TaskDomain task)
 	{
-		var existing = await _dbContext.Tasks.FindAsync(task.Id);
-		if (existing != null)
+		var entity = await _dbContext.Tasks
+			.FirstOrDefaultAsync(t => t.Id == task.Id);
+
+		if (entity == null)
 		{
-			existing.Title = task.Title;
-			existing.Description = task.Description;
-			existing.Deadline = task.Deadline;
-			existing.IsApproved = task.IsApproved;
-			existing.State = task.State.ToString();
-			existing.UserId = task.PlannerId;
+			var newEntity = Mappers.MapTaskToEntity(task);
+			await _dbContext.Tasks.AddAsync(newEntity);
 		}
 		else
 		{
-			var entity = MapToEntity(task);
-			await _dbContext.Tasks.AddAsync(entity);
+			entity.Title = task.Title;
+			entity.Description = task.Description;
+			entity.Deadline = task.Deadline;
+			entity.State = task.State.ToString();
+			entity.IsApproved = task.IsApproved;
+			entity.PlannerId = task.PlannerId;
 		}
+
 		await _dbContext.SaveChangesAsync();
 	}
-
+	
 	public async Task RemoveTaskAsync(TaskDomain task)
 	{
-		var existing = await _dbContext.Tasks.FindAsync(task.Id);
-		if (existing != null)
+		var entity = await _dbContext.Tasks
+			.FirstOrDefaultAsync(t => t.Id == task.Id);
+
+		if (entity != null)
 		{
-			_dbContext.Tasks!.Remove(existing);
+			_dbContext.Tasks.Remove(entity);
 			await _dbContext.SaveChangesAsync();
 		}
 	}

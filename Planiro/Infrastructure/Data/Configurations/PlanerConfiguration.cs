@@ -6,13 +6,13 @@ namespace Planiro.Infrastructure.Data.Configurations;
 
 public class PlanerConfiguration
 {
-    public void Configure(EntityTypeBuilder<PlanerEntity> builder)
+    public void Configure(EntityTypeBuilder<PlannerEntity> builder)
     {
-        builder.HasKey(p => p.PlanerId);
+        builder.HasKey(p => p.Id);
 
         // Связь с User (1 Planer -> 1 User, 1 User -> Many Planers)
         builder.HasOne(p => p.User)
-            .WithMany(u => u.Planers)
+            .WithMany(u => u.Planners)
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
@@ -24,20 +24,20 @@ public class PlanerConfiguration
 
         // Связь с Tasks (1 Planer -> Many Tasks)
         builder.HasMany(p => p.ToDoTasks)
-            .WithOne(t => t.Planer)
-            .HasForeignKey(t => t.PlanerId);
+            .WithOne(t => t.Planner)
+            .HasForeignKey(t => t.PlannerId);
 
         builder.HasMany(p => p.InProgressTasks)
-            .WithOne(t => t.Planer)
-            .HasForeignKey(t => t.PlanerId);
+            .WithOne(t => t.Planner)
+            .HasForeignKey(t => t.PlannerId);
 
         builder.HasMany(p => p.OnCheckingTasks)
-            .WithOne(t => t.Planer)
-            .HasForeignKey(t => t.PlanerId);
+            .WithOne(t => t.Planner)
+            .HasForeignKey(t => t.PlannerId);
 
         builder.HasMany(p => p.DoneTasks)
-            .WithOne(t => t.Planer)
-            .HasForeignKey(t => t.PlanerId);
+            .WithOne(t => t.Planner)
+            .HasForeignKey(t => t.PlannerId);
     }
 
     

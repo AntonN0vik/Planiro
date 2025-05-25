@@ -10,12 +10,14 @@ public class Team
     
     public Guid TeamleadId { get; set; }
     
-    public Team(Guid id, string? joinCode, ICollection<Guid>? collaborators, Guid teamleadId)
+    public ICollection<Guid>? Planners { get; set; }
+    
+    public Team(Guid id, string? joinCode, ICollection<Guid>? collaborators, Guid teamleadId, ICollection<Guid>? planners)
     {
         this.Id = id;
         this.JoinCode = joinCode;
         this.Collaborators = collaborators;
         this.TeamleadId = teamleadId;
+        this.Planners = Planners;
     }
-
 }

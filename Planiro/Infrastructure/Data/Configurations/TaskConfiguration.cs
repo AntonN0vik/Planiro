@@ -11,9 +11,9 @@ public class TaskConfiguration : IEntityTypeConfiguration<TaskEntity>
         builder.HasKey(t => t.Id);
         
         // Связь с Planer (Many Tasks -> 1 Planer)
-        builder.HasOne(t => t.Planer)
+        builder.HasOne(t => t.Planner)
             .WithMany(p => p.ToDoTasks) // Выберите нужную коллекцию
-            .HasForeignKey(t => t.PlanerId)
+            .HasForeignKey(t => t.PlannerId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

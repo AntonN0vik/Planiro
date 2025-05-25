@@ -21,5 +21,5 @@ public class Task
     
     public bool IsApproved { get; set; } = false;
     
-    public Guid PlannerId;
+    public Guid PlannerId { get; set; }
 }

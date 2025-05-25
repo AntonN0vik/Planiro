@@ -4,13 +4,12 @@ using Task = System.Threading.Tasks.Task;
 using TaskDomain = Planiro.Domain.Entities.Task;
 
 public interface ITaskRepository
-{
-    Task<ICollection<TaskDomain>> GetTaskByUserIdAsync(Guid userId);
+{   
+    Task<TaskDomain> GetTaskByIdAsync(Guid taskId);
     
-    Task<ICollection<TaskDomain>> GetTaskByTeamIdAsync(Guid teamId);
+    Task<ICollection<TaskDomain>> GetTaskByUserIdAsync(Guid plannerId);
     
     Task SaveTaskAsync(TaskDomain task);
     
     Task RemoveTaskAsync(TaskDomain task);
-    Task<TaskDomain> GetTaskByIdAsync(Guid taskId);
 }

@@ -22,16 +22,13 @@ public class TeamRepository : ITeamRepository
 			.AnyAsync(x => x.JoinCode == joinCode);
 	}
 	
-	public async Task<ICollection<User>> GetUsersAsync(string joinCode)
+	public async Task<ICollection<User>> GetUsersAsync(Guid teamId)
 	{
-		var teamEntity = await _dbContext.Teams!
-        .Include(t => t.Users)
-        .FirstOrDefaultAsync(t => t.JoinCode == joinCode);
-
-		if (teamEntity == null || teamEntity.Users == null)
-			return new List<User>();
-    
-		return teamEntity.Users.Select(UserRepository.MapUserToDomain).ToList();
+		var entity = await _dbContext.Teams!
+			.Include(t => t.Users)
+			.FirstOrDefaultAsync(t => t.Id == teamId);
+		
+		return entity.Users.Select(Mappers.MapUserToDomain).ToList();
 	}
 	
 	public async Task<string?> GetJoinCodeAsync(Guid teamleadId)
@@ -56,7 +53,7 @@ public class TeamRepository : ITeamRepository
 		if (leadEntity == null)
 			return null;
 
-		return UserRepository.MapUserToDomain(leadEntity);
+		return Mappers.MapUserToDomain(leadEntity);
 	}
 
 	public async Task SaveTeamAsync(Team team)
@@ -66,7 +63,7 @@ public class TeamRepository : ITeamRepository
 
 		if (existingTeam == null)
 		{
-			var entity = MapTeamToEntity(team);
+			var entity = Mappers.MapTeamToEntity(team);
 			_dbContext.Teams!.Add(entity);
 		}
 		else
@@ -78,11 +75,11 @@ public class TeamRepository : ITeamRepository
 		await _dbContext.SaveChangesAsync();
 	}
 	
-	public async Task AddUserAsync(User user, string joinCode)
+	public async Task AddUserAsync(User user, Guid teamId)
 	{
 		var team = await _dbContext.Teams!
 			.Include(t => t.Users)
-			.FirstOrDefaultAsync(t => t.JoinCode == joinCode);
+			.FirstOrDefaultAsync(t => t.Id == teamId);
 
 		if (team == null)
 			throw new InvalidOperationException("Команда не найдена");
@@ -102,11 +99,12 @@ public class TeamRepository : ITeamRepository
 			await _dbContext.SaveChangesAsync();
 		}
 	}
-	public async Task RemoveUserAsync(User user, string joinCode)
+	
+	public async Task RemoveUserAsync(User user, Guid teamId)
 	{
 		var team = await _dbContext.Teams!
 			.Include(t => t.Users)
-			.FirstOrDefaultAsync(t => t.JoinCode == joinCode);
+			.FirstOrDefaultAsync(t => t.Id == teamId);
 
 		if (team == null)
 			throw new InvalidOperationException("Команда не найдена");
@@ -121,26 +119,5 @@ public class TeamRepository : ITeamRepository
 			team.Users.Remove(userEntity);
 			await _dbContext.SaveChangesAsync();
 		}
-	}
-	
-	private static TeamEntity MapTeamToEntity(Team team)
-	{
-		return new TeamEntity
-		{
-			Id = team.Id,
-			JoinCode = team.JoinCode,
-			TeamleadId = team.TeamleadId
-			// Users устанавливаются отдельно
-		};
-	}
-
-	private static Team MapTeamToDomain(TeamEntity entity)
-	{
-		return new Team(
-			entity.Id,
-			entity.JoinCode,
-			entity.Users?.Select(u => u.Id).ToList(),
-			entity.TeamleadId
-			);
 	}
 }
