@@ -7,6 +7,22 @@ namespace Planiro.Controllers;
 [Route("api/[controller]")]
 public class TeamsController : ControllerBase
 {
+    private static List<TaskShema> _tasks = new List<TaskShema>
+    {
+        new TaskShema(
+            "1", 
+            "Пример задачи", 
+            "Описание задачи",
+            "To Do",
+            "1",
+            DateTime.Now.AddDays(7).ToString("yyyy-MM-dd")
+        )
+    };
+
+    private static List<Member> _members = new List<Member>
+    {
+        new Member("1", "Тестовый участник" )
+    };
     private readonly TeamAuthorizationService _teamService;
 
     public TeamsController(TeamAuthorizationService teamService)
@@ -15,7 +31,7 @@ public class TeamsController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> CreateTeam(Planiro.Models.CreateTeamRequest request)
+    public async Task<IActionResult> CreateTeam([FromBody] Planiro.Models.CreateTeamRequest request)
     {
         try
         {
@@ -48,8 +64,9 @@ public class TeamsController : ControllerBase
                 Username: request.Username);
 
             await _teamService.AuthorizeTeam(joinRequest);
+            var testTeamId = "2afc3bf5-4c11-4d58-b65e-a8c3bdbaeda1";
         
-            return Ok(new { message = "Успешное подключение к команде" });
+            return Ok(new { message = "Успешное подключение к команде", teamId = testTeamId});
         }
         
         catch (ArgumentException ex)
@@ -61,12 +78,17 @@ public class TeamsController : ControllerBase
             return StatusCode(500, new { Error = "Internal server error" });
         }
     }
-
-    [HttpGet("{*url}")]
-    public IActionResult Spa()
+    
+    // GET: api/teams/{teamId}
+    [HttpGet("{teamId}")]
+    public IActionResult GetTeamData(string teamId)
     {
-        return PhysicalFile(
-            Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "index.html"),
-            "text/html");
+        //TODO 
+        return Ok(new
+        {
+            tasks = _tasks,
+            members = _members
+        });
     }
+    
 }

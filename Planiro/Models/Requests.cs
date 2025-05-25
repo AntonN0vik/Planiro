@@ -18,3 +18,28 @@ public record CreateTeamRequest(
 public record JoinTeamRequest(
     [Required, MaxLength(8)] string Code,
     [Required] string Username);
+
+public record TaskShema(
+    [Required] string Id,
+    [Required] string Title, 
+    string Description,
+    [Required] string Status,
+    [Required] string Assignee,
+    [Required] string Deadline
+);
+
+public record ReorderRequest(
+    [Required] List<TaskShema> Task
+);
+
+public record TaskRequest(
+    [Required] string Title,
+    [Required] string Description,
+    [Required] string Assignee,
+    [Required] string Deadline
+);
+
+public record Member(
+    [Required] string Id,
+    [Required] string Name
+);
