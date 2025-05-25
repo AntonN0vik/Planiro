@@ -11,5 +11,6 @@ public interface IUserRepository
 	Task<bool> CheckPasswordAsync(string username, string password);
 	Task<User?> GetUserByNameAsync(string username);
 	Task SaveUserAsync(User user, string password);
+	Task<User> GetUserByIdAsync(Guid userId);
 	
 }

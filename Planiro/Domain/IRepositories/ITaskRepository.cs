@@ -12,4 +12,5 @@ public interface ITaskRepository
     Task SaveTaskAsync(TaskDomain task);
     
     Task RemoveTaskAsync(TaskDomain task);
+    Task<TaskDomain> GetTaskByIdAsync(Guid taskId);
 }
