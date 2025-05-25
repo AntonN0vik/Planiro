@@ -15,11 +15,11 @@ public class TeamConfiguration : IEntityTypeConfiguration<TeamEntity>
             .WithMany(u => u.Teams)
             .UsingEntity(j => j.ToTable("TeamUsers"));
 
-        // Связь с Planer (1 Team -> Many Planers)
-        builder.HasMany(t => t.Planers)
+        // Связь с Planer (1 Team -> Many Planners)
+        builder.HasMany(t => t.Planners)
             .WithOne(p => p.Team)
             .HasForeignKey(p => p.TeamId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
     }
 }

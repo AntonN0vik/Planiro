@@ -38,7 +38,22 @@ public class TeamRepository : ITeamRepository
 
 		return team?.JoinCode;
 	}
-	
+
+	public Task<Guid> GetTeamIdByJoinCodeAsync(string joinCode)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task<Guid> GetPlannerIdAsync(Guid teamId, Guid userId)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task<User?> GetTeamleadByIdAsync(Guid teamId)
+	{
+		throw new NotImplementedException();
+	}
+
 	public async Task<User?> GetTeamleadByIdAsync(string joinCode)
 	{
 		var teamEntity = await _dbContext.Teams!

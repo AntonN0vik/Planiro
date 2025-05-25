@@ -3,9 +3,8 @@ using Planiro.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
+namespace Planiro.Application.Services;
 
-namespace Planiro.Application.Services
-{
     public class TeamService
     {
         private readonly ITeamRepository _teamRepository;
@@ -19,27 +18,21 @@ namespace Planiro.Application.Services
             _userRepository = userRepository;
         }
 
-        public async Task<string> CreateTeamAsync(Team team)
+        public async Task<IEnumerable<User>> GetTeamMembersAsync(Guid teamId)
         {
-            await _teamRepository.SaveTeamAsync(team);
-            return team.JoinCode;
+            return await _teamRepository.GetUsersAsync(teamId);
         }
 
-        public async Task JoinTeamAsync(string joinCode, Guid userId)
+        public async Task RemoveMemberAsync(Guid teamId, Guid userId)
         {
             var user = await _userRepository.GetUserByIdAsync(userId);
+            await _teamRepository.RemoveUserAsync(user, teamId);
             await _teamRepository.AddUserAsync(user, userId);
         }
 
-        public async Task<IEnumerable<User>> GetTeamMembersAsync(string joinCode)
+        public async Task<Guid> GetPlannerIdAsync(Guid teamId, Guid userId)
         {
-            return await _teamRepository.GetUsersAsync(joinCode);
+            return await _teamRepository.GetPlannerIdAsync(teamId, userId);
         }
 
-        public async Task RemoveMemberAsync(string joinCode, Guid userId)
-        {
-            var user = await _userRepository.GetUserByIdAsync(userId);
-            await _teamRepository.RemoveUserAsync(user, userId);
-        }
     }
-}

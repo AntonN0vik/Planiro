@@ -26,15 +26,15 @@ public class Mappers
 		Enum.TryParse(entity.State, out state);
 
 		return new Task
-		{
-			Id = entity.Id,
-			Title = entity.Title,
-			Description = entity.Description,
-			Deadline = entity.Deadline,
-			IsApproved = entity.IsApproved,
-			State = state,
-			PlannerId = entity.PlannerId
-		};
+		(
+			entity.Id,
+			entity.Title,
+			entity.Description,
+			state,
+			entity.Deadline,
+			entity.PlannerId,
+			entity.IsApproved
+		);
 	}
 	
 	public static UserEntity MapUserToEntity(User user, string passwordHash)
@@ -72,7 +72,7 @@ public class Mappers
 			JoinCode = team.JoinCode,
 			TeamleadId = team.TeamleadId,
 			Users = team.Collaborators?.Select(id => new UserEntity { Id = id }).ToList(),
-			Planers = team.Planners?.Select(id => new PlannerEntity { Id = id }).ToList()
+			Planners = team.Planners?.Select(id => new PlannerEntity { Id = id }).ToList()
 		};
 	}
 
@@ -83,7 +83,7 @@ public class Mappers
 			entity.JoinCode,
 			entity.Users?.Select(u => u.Id).ToList(),
 			entity.TeamleadId,
-			entity.Planers?.Select(pl => pl.Id).ToList()
+			entity.Planners?.Select(pl => pl.Id).ToList()
 			);
 	}
 }

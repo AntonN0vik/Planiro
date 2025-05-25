@@ -5,45 +5,34 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 
-namespace Planiro.Application.Services
+namespace Planiro.Application.Services;
+
+public abstract class TaskService(ITaskRepository taskRepository)
 {
-    public class TaskService
+    public async Task<IEnumerable<Domain.Entities.Task>> GetUserTasksAsync(Guid userId)
     {
-        private readonly ITaskRepository _taskRepository;
+        return await taskRepository.GetTaskByUserIdAsync(userId);
+    }
 
-        public TaskService(ITaskRepository taskRepository)
-        {
-            _taskRepository = taskRepository;
-        }
+    // public async Task<IEnumerable<Domain.Entities.Task>> GetTeamTasksAsync(Guid teamId)
+    // {
+    //     return await _taskRepository.GetTaskByTeamIdAsync(teamId);
+    // }
 
-        public async Task<IEnumerable<Domain.Entities.Task>> GetUserTasksAsync(Guid userId)
-        {
-            return await _taskRepository.GetTaskByUserIdAsync(userId);
-        }
+    public async Task<Domain.Entities.Task> CreateTaskAsync(Domain.Entities.Task task)
+    {
+        await taskRepository.SaveTaskAsync(task);
+        return task;
+    }
 
-        public async Task<IEnumerable<Domain.Entities.Task>> GetTeamTasksAsync(Guid teamId)
-        {
-            return await _taskRepository.GetTaskByTeamIdAsync(teamId);
-        }
+    public async Task UpdateTaskAsync(Domain.Entities.Task task)
+    {
+        await taskRepository.SaveTaskAsync(task);
+    }
 
-        public async Task<Domain.Entities.Task> CreateTaskAsync(Domain.Entities.Task task)
-        {
-            await _taskRepository.SaveTaskAsync(task);
-            return task;
-        }
-
-        public async Task UpdateTaskAsync(Domain.Entities.Task task)
-        {
-            await _taskRepository.SaveTaskAsync(task);
-        }
-
-        public async Task DeleteTaskAsync(Guid taskId)
-        {
-            var task = await _taskRepository.GetTaskByIdAsync(taskId);
-            if (task != null)
-            {
-                await _taskRepository.RemoveTaskAsync(task);
-            }
-        }
+    public async Task DeleteTaskAsync(Guid taskId)
+    {
+        var task = await taskRepository.GetTaskByIdAsync(taskId);
+        await taskRepository.RemoveTaskAsync(task);
     }
 }

@@ -2,24 +2,38 @@
 
 public class Task
 {
-    public Guid Id { get; set; }
-    
-    public string? Title { get; set; }
+    public Guid Id { get; private set; }
 
-    public string? Description { get; set; } 
+    public string? Title { get; private set; }
+
+    public string? Description { get; private set; }
+
     public enum States
     {
-        ToDo, 
+        ToDo,
         InProgress,
-        OnChecking, 
+        OnChecking,
         Done
     }
-    
-    public States State { get; set; }
-    
-    public DateTime? Deadline { get; set; }
-    
-    public bool IsApproved { get; set; } = false;
-    
-    public Guid PlannerId { get; set; }
+
+    public States State { get; private set; }
+
+    public DateTime? Deadline { get; private set; }
+
+    public bool IsApproved { get; private set; } = false;
+
+    public Guid PlannerId { get; private set; }
+
+    public Task(Guid id, string? title, string? description, States state,
+                DateTime? deadline, Guid plannerId,
+                bool isApproved = false)
+    {
+        Id = id;
+        Title = title;
+        Description = description;
+        State = state;
+        Deadline = deadline;
+        PlannerId = plannerId;
+        IsApproved = isApproved;
+    }
 }

@@ -1,28 +1,22 @@
 ﻿// Controllers/MembersController.cs
 
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using Planiro.Models;
+using Planiro.Application.Services;
+
+namespace Planiro.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class MembersController : ControllerBase
+public class MembersController(TeamService teamService) : ControllerBase
 {
-    private static List<Member> _members = new List<Member>
-    {
-        new Member("1", "Тестовый участник" )
-    };
-
     // DELETE: api/members/{memberId}
     [HttpDelete("{memberId}")]
-    public IActionResult DeleteMember(string memberId)
+    public IActionResult DeleteMember(string memberId, string teamId)
     {
         //TODO 
-        var member = _members.FirstOrDefault(m => m.Id == memberId);
-        if (member == null) return NotFound();
-
-        _members.Remove(member);
-        
+        var newTeamId = Guid.Parse(teamId);
+        var newMemberId = Guid.Parse(memberId);
+        var _members = teamService.RemoveMemberAsync(newTeamId, newMemberId);
         return Ok(new { message = "Участник удален" });
     }
     
