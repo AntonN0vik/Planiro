@@ -58,15 +58,16 @@ public class TeamsController : ControllerBase
     {
         try
         {
-            // Создаем JoinTeamRequest через конструктор
             var joinRequest = new JoinTeamRequest(
                 Code: request.Code.Replace("-", ""),
                 Username: request.Username);
 
-            await _teamService.AuthorizeTeam(joinRequest);
-            var testTeamId = "2afc3bf5-4c11-4d58-b65e-a8c3bdbaeda1";
+            var teamId = await _teamService.AuthorizeTeamAndGetId(joinRequest);
         
-            return Ok(new { message = "Успешное подключение к команде", teamId = testTeamId});
+            return Ok(new { 
+                message = "Успешное подключение к команде", 
+                teamId = teamId.ToString() 
+            });
         }
         
         catch (ArgumentException ex)

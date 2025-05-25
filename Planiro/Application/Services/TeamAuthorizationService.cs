@@ -32,7 +32,7 @@ public class TeamAuthorizationService
         return joinCode;
     }
 
-    public async Task AuthorizeTeam(JoinTeamRequest joinRequest)
+    public async Task<Guid> AuthorizeTeamAndGetId(JoinTeamRequest joinRequest)
     {
         var username = joinRequest.Username;
         var joinCode = joinRequest.Code;
@@ -47,6 +47,7 @@ public class TeamAuthorizationService
             throw new ArgumentException($"User '{joinRequest.Username}' not found", nameof(joinRequest.Username));
 
         await _teamRepository.AddUserAsync(user, teamId);
+        return teamId;
     }
 
     // public async Task<string> GetJoinCode(CreateTeamRequest createTeamRequest)

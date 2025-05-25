@@ -10,6 +10,6 @@ public class TaskEntity
     public DateTime? Deadline { get; set; }
     public bool IsApproved { get; set; }
     
-    public Guid PlannerId;
+    public Guid PlannerId{ get; set; }
     public PlannerEntity? Planner { get; set; }
 }

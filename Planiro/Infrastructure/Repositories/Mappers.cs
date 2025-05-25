@@ -22,7 +22,7 @@ public class Mappers
 
 	public static Task MapTaskToDomain(TaskEntity entity)
 	{
-		Task.States state = Task.States.ToDo;
+		Task.States state;
 		Enum.TryParse(entity.State, out state);
 
 		return new Task

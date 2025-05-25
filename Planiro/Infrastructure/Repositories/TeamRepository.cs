@@ -39,19 +39,43 @@ public class TeamRepository : ITeamRepository
 		return team?.JoinCode;
 	}
 
-	public Task<Guid> GetTeamIdByJoinCodeAsync(string joinCode)
+	public async Task<Guid> GetTeamIdByJoinCodeAsync(string joinCode)
 	{
-		throw new NotImplementedException();
+		var team = await _dbContext.Teams!
+			.FirstOrDefaultAsync(t => t.JoinCode == joinCode);
+
+		if (team == null)
+			throw new InvalidOperationException("Команда с указанным кодом не найдена");
+
+		return team.Id;
 	}
 
-	public Task<Guid> GetPlannerIdAsync(Guid teamId, Guid userId)
+	public async Task<Guid> GetPlannerIdAsync(Guid teamId, Guid userId)
 	{
-		throw new NotImplementedException();
+		var planner = await _dbContext.Planners!
+			.FirstOrDefaultAsync(p => p.TeamId == teamId && p.UserId == userId);
+
+		if (planner == null)
+			throw new InvalidOperationException("Планировщик не найден для указанного пользователя в команде");
+
+		return planner.Id;
 	}
 
-	public Task<User?> GetTeamleadByIdAsync(Guid teamId)
+	public  async Task<User?> GetTeamleadByIdAsync(Guid teamId)
 	{
-		throw new NotImplementedException();
+		var team = await _dbContext.Teams!
+			.FirstOrDefaultAsync(t => t.Id == teamId);
+
+		if (team == null)
+			return null;
+
+		var leadEntity = await _dbContext.Users!
+			.FirstOrDefaultAsync(u => u.Id == team.TeamleadId);
+
+		if (leadEntity == null)
+			return null;
+
+		return Mappers.MapUserToDomain(leadEntity);
 	}
 
 	public async Task<User?> GetTeamleadByIdAsync(string joinCode)

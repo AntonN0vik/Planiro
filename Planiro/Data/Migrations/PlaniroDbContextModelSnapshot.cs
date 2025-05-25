@@ -22,6 +22,27 @@ namespace Planiro.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Planiro.Infrastructure.Data.Entities.PlannerEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TeamId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Planners");
+                });
+
             modelBuilder.Entity("Planiro.Infrastructure.Data.Entities.TaskEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -37,18 +58,18 @@ namespace Planiro.Data.Migrations
                     b.Property<bool>("IsApproved")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid>("PlannerId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("State")
                         .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("PlannerId");
 
                     b.ToTable("Tasks");
                 });
@@ -112,13 +133,34 @@ namespace Planiro.Data.Migrations
                     b.ToTable("TeamEntityUserEntity");
                 });
 
-            modelBuilder.Entity("Planiro.Infrastructure.Data.Entities.TaskEntity", b =>
+            modelBuilder.Entity("Planiro.Infrastructure.Data.Entities.PlannerEntity", b =>
                 {
+                    b.HasOne("Planiro.Infrastructure.Data.Entities.TeamEntity", "Team")
+                        .WithMany("Planners")
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Planiro.Infrastructure.Data.Entities.UserEntity", "User")
-                        .WithMany("Tasks")
-                        .HasForeignKey("UserId1");
+                        .WithMany("Planners")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Team");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Planiro.Infrastructure.Data.Entities.TaskEntity", b =>
+                {
+                    b.HasOne("Planiro.Infrastructure.Data.Entities.PlannerEntity", "Planner")
+                        .WithMany("Tasks")
+                        .HasForeignKey("PlannerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Planner");
                 });
 
             modelBuilder.Entity("TeamEntityUserEntity", b =>
@@ -136,9 +178,19 @@ namespace Planiro.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Planiro.Infrastructure.Data.Entities.UserEntity", b =>
+            modelBuilder.Entity("Planiro.Infrastructure.Data.Entities.PlannerEntity", b =>
                 {
                     b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("Planiro.Infrastructure.Data.Entities.TeamEntity", b =>
+                {
+                    b.Navigation("Planners");
+                });
+
+            modelBuilder.Entity("Planiro.Infrastructure.Data.Entities.UserEntity", b =>
+                {
+                    b.Navigation("Planners");
                 });
 #pragma warning restore 612, 618
         }
