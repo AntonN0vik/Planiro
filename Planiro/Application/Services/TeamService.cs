@@ -1,8 +1,7 @@
 ﻿using Planiro.Domain.IRepositories;
 using Planiro.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
+using TaskDomain =  Planiro.Domain.Entities.Task;
 namespace Planiro.Application.Services;
 
     public class TeamService
@@ -33,6 +32,11 @@ namespace Planiro.Application.Services;
         public async Task<Guid> GetPlannerIdAsync(Guid teamId, Guid userId)
         {
             return await _teamRepository.GetPlannerIdAsync(teamId, userId);
+        }
+
+        public async Task<ICollection<TaskDomain>> GetTasksByTeamIdAsync(Guid teamId)
+        {
+            return await _teamRepository.GetTasksByTeamIdAsync(teamId);
         }
 
     }

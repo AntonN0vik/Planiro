@@ -1,32 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Globalization;
+using Microsoft.AspNetCore.Mvc;
 using Planiro.Application.Services;
 using Planiro.Models;
 
 namespace Planiro.Controllers;
+
 [ApiController]
 [Route("api/[controller]")]
 public class TeamsController : ControllerBase
 {
-    private static List<TaskShema> _tasks = new List<TaskShema>
-    {
-        new TaskShema(
-            "1", 
-            "Пример задачи", 
-            "Описание задачи",
-            "To Do",
-            "1",
-            DateTime.Now.AddDays(7).ToString("yyyy-MM-dd")
-        )
-    };
+    private readonly TeamAuthorizationService _teamAuthService;
+    private readonly TeamService _teamService;
 
-    private static List<Member> _members = new List<Member>
+    public TeamsController(TeamAuthorizationService teamAuthService, TeamService teamService)
     {
-        new Member("1", "Тестовый участник" )
-    };
-    private readonly TeamAuthorizationService _teamService;
-
-    public TeamsController(TeamAuthorizationService teamService)
-    {
+        _teamAuthService = teamAuthService;
         _teamService = teamService;
     }
 
@@ -35,8 +23,8 @@ public class TeamsController : ControllerBase
     {
         try
         {
-            var code = await _teamService.RegisterTeam(request);
-            
+            var code = await _teamAuthService.RegisterTeam(request);
+
             return Ok(new
             {
                 code = $"{code.Substring(0, 4)}-{code.Substring(4, 4)}",
@@ -62,14 +50,15 @@ public class TeamsController : ControllerBase
                 Code: request.Code.Replace("-", ""),
                 Username: request.Username);
 
-            var teamId = await _teamService.AuthorizeTeamAndGetId(joinRequest);
-        
-            return Ok(new { 
-                message = "Успешное подключение к команде", 
-                teamId = teamId.ToString() 
+            var teamId = await _teamAuthService.AuthorizeTeamAndGetId(joinRequest);
+
+            return Ok(new
+            {
+                message = "Успешное подключение к команде",
+                teamId = teamId.ToString()
             });
         }
-        
+
         catch (ArgumentException ex)
         {
             return BadRequest(new { Error = ex.Message });
@@ -79,17 +68,55 @@ public class TeamsController : ControllerBase
             return StatusCode(500, new { Error = "Internal server error" });
         }
     }
-    
+
     // GET: api/teams/{teamId}
     [HttpGet("{teamId}")]
-    public IActionResult GetTeamData(string teamId)
+    public async Task<IActionResult> GetTeamData(string teamId)
     {
         //TODO 
-        return Ok(new
+        try
         {
-            tasks = _tasks,
-            members = _members
-        });
+            var newTeamId = Guid.Parse(teamId);
+            var members = await _teamService.GetTeamMembersAsync(newTeamId);
+            var enumerable = members.ToList();
+            if (enumerable.Count == 0)
+                return Ok(new
+                {
+                    tasks = new List<TaskShema>(),
+                    members = new List<Member>()
+                });
+            var connectPlannersUsers = enumerable?.Select(x => (x.Id, x.Planners));
+            var newMembers = (from member in enumerable
+                let id = member.Id.ToString()
+                let name = $"{member.FirstName} {member.LastName}"
+                select new Member(id, name)).ToList();
+            var tasks = await _teamService.GetTasksByTeamIdAsync(newTeamId);
+
+            var newTasks = (from task in tasks
+                let id = task.Id.ToString()
+                let title = task.Title
+                let description = task.Description
+                let status = task.State.ToString()
+                let assignee = connectPlannersUsers.FirstOrDefault(x => x.Planners.Contains(task.PlannerId)).Id
+                    .ToString()
+                let deadline = task.Deadline.ToString()
+                select new TaskShema(id, title, description, status, assignee, deadline)).ToList();
+
+            return Ok(new
+            {
+                tasks = newTasks,
+                members = newMembers
+            });
+        }
+        catch (ArgumentException ex)
+        {
+            Console.WriteLine(ex);
+            return Conflict();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return Conflict();
+        }
     }
-    
 }

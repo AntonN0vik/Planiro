@@ -35,9 +35,12 @@ builder.Services.AddDbContext<PlaniroDbContext>(options =>
 });
 builder.Services.AddScoped<UserAuthorizationService>();
 builder.Services.AddScoped<TeamAuthorizationService>();
+builder.Services.AddScoped<TeamService>();
+builder.Services.AddScoped<TaskService>();
 builder.Services.AddScoped<PasswordHasher>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 
 var app = builder.Build();
 

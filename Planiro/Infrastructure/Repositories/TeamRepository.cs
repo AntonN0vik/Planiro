@@ -61,6 +61,11 @@ public class TeamRepository : ITeamRepository
 		return planner.Id;
 	}
 
+	public Task<ICollection<Domain.Entities.Task>> GetTasksByTeamIdAsync(Guid teamId)
+	{
+		throw new NotImplementedException();
+	}
+
 	public  async Task<User?> GetTeamleadByIdAsync(Guid teamId)
 	{
 		var team = await _dbContext.Teams!

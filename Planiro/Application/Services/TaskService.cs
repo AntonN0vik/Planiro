@@ -7,7 +7,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Planiro.Application.Services;
 
-public abstract class TaskService(ITaskRepository taskRepository)
+public class TaskService(ITaskRepository taskRepository)
 {
     public async Task<IEnumerable<Domain.Entities.Task>> GetUserTasksAsync(Guid userId)
     {

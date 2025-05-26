@@ -19,6 +19,8 @@ public interface ITeamRepository
     //идет в бд команд - находит нужную по id -> берёт коллекцию планеров ->
     // в этих планерах находит нужный по id юзера -> возвращает id planner  
     
+    Task<ICollection<TaskDomain>> GetTasksByTeamIdAsync(Guid teamId); 
+    
     Task<User?> GetTeamleadByIdAsync(Guid teamId);
     // ищет в бд команду по коду вступления, берет id тимлида,
     // идет в таблицу юзеров и находит тимлида
