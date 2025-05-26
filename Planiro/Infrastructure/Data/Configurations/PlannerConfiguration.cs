@@ -4,7 +4,7 @@ using Planiro.Infrastructure.Data.Entities;
 
 namespace Planiro.Infrastructure.Data.Configurations;
 
-public class PlannerConfiguration
+public class PlannerConfiguration: IEntityTypeConfiguration<PlannerEntity>
 {
     public void Configure(EntityTypeBuilder<PlannerEntity> builder)
     {
