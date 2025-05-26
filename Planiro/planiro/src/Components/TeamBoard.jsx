@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, {useState, useEffect} from 'react';
 import {
     DndContext,
     closestCenter,
@@ -8,19 +8,19 @@ import {
     PointerSensor,
     useDroppable
 } from '@dnd-kit/core';
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
+import {restrictToVerticalAxis} from '@dnd-kit/modifiers'
 import {
     SortableContext,
     verticalListSortingStrategy,
     arrayMove,
     useSortable
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import {CSS} from '@dnd-kit/utilities';
 import axios from 'axios';
 
 const API_URL = 'http://localhost:5036/api';
 
-const SortableTask = ({ task, members }) => {
+const SortableTask = ({task, members}) => {
     const {
         attributes,
         listeners,
@@ -61,8 +61,8 @@ const SortableTask = ({ task, members }) => {
 };
 
 // Компонент для области сброса (колонки)
-const DroppableColumn = ({ column, tasks, members }) => {
-    const { setNodeRef, isOver } = useDroppable({
+const DroppableColumn = ({column, tasks, members}) => {
+    const {setNodeRef, isOver} = useDroppable({
         id: column
     });
 
@@ -93,7 +93,8 @@ const DroppableColumn = ({ column, tasks, members }) => {
     );
 };
 
-const TeamBoard = ({ isTeamLead }) => {
+
+const TeamBoard = ({isTeamLead}) => {
     const [tasks, setTasks] = useState([]);
     const [members, setMembers] = useState([]);
     const [viewMode, setViewMode] = useState('my');
@@ -133,17 +134,19 @@ const TeamBoard = ({ isTeamLead }) => {
 
     // Обработка начала перетаскивания
     const handleDragStart = (event) => {
-        const { active } = event;
+        const {active} = event;
         const task = tasks.find(t => t.id === active.id);
         setActiveTask(task);
     };
 
     // Обработка окончания перетаскивания
     const handleDragEnd = async (event) => {
-        const { active, over } = event;
+        const {active, over} = event;
         setActiveTask(null);
 
-        if (!over) return;
+        if (!over || activeTask.status === over.id) {
+            return; // Ничего не делаем
+        }
 
         const taskId = active.id;
         const targetColumn = over.id;
@@ -152,14 +155,15 @@ const TeamBoard = ({ isTeamLead }) => {
         try {
             // Оптимистичное обновление
             const updatedTasks = tasks.map(t =>
-                t.id === taskId ? { ...t, status: targetColumn } : t
+                t.id === taskId ? {...t, status: targetColumn} : t
             );
             setTasks(updatedTasks);
 
             // Отправка запроса
             await axios.put(`${API_URL}/Tasks/${taskId}`, {
                 ...tasks.find(t => t.id === taskId),
-                status: targetColumn
+                status: targetColumn,
+                teamId: localStorage.getItem('teamId') // Добавлено
             });
         } catch (error) {
             console.error('Ошибка перемещения задачи:', error);
@@ -172,12 +176,18 @@ const TeamBoard = ({ isTeamLead }) => {
         try {
             const response = await axios.post(`${API_URL}/Tasks`, {
                 ...newTask,
-                status: 'To Do'
+                status: 'To Do',
+                teamId: localStorage.getItem('teamId') // Добавлено
             });
 
             setTasks([...tasks, response.data]);
             setShowTaskModal(false);
-            setNewTask({ title: '', description: '', deadline: '', assignee: '' });
+            setNewTask({
+                title: '',
+                description: '',
+                deadline: '',
+                assignee: ''
+            });
         } catch (error) {
             console.error('Ошибка создания задачи:', error);
         }
@@ -186,7 +196,11 @@ const TeamBoard = ({ isTeamLead }) => {
     // Удаление участника
     const handleRemoveMember = async (memberId) => {
         try {
-            await axios.delete(`${API_URL}/Members/${memberId}`);
+            await axios.delete(`${API_URL}/Members/${memberId}`, {
+                data: {
+                    teamId: localStorage.getItem('teamId')
+                }
+            });
             setMembers(members.filter(m => m.id !== memberId));
         } catch (error) {
             console.error('Ошибка удаления участника:', error);
@@ -252,7 +266,8 @@ const TeamBoard = ({ isTeamLead }) => {
                     <ul>
                         {members.map(member => (
                             <li key={member.id}>
-                                <span className="member-name">{member.name}</span>
+                                <span
+                                    className="member-name">{member.name}</span>
                                 {isTeamLead && (
                                     <button
                                         className="remove-member-btn"
@@ -304,7 +319,8 @@ const TeamBoard = ({ isTeamLead }) => {
             {showCodeModal && (
                 <div className="modal" onClick={handleModalClick}>
                     <div className="modal-content code-modal">
-                        <h3>Код команды: {localStorage.getItem('teamCode')}</h3>
+                        <h3>Код
+                            команды: {localStorage.getItem('teamCode')}</h3>
                         <button
                             className="modal-btn primary"
                             onClick={() => setShowCodeModal(false)}
@@ -327,7 +343,10 @@ const TeamBoard = ({ isTeamLead }) => {
                                 className="modal-input"
                                 placeholder="Название задачи"
                                 value={newTask.title}
-                                onChange={(e) => setNewTask({...newTask, title: e.target.value})}
+                                onChange={(e) => setNewTask({
+                                    ...newTask,
+                                    title: e.target.value
+                                })}
                             />
 
                             <textarea
@@ -335,20 +354,29 @@ const TeamBoard = ({ isTeamLead }) => {
                                 placeholder="Описание"
                                 rows="3"
                                 value={newTask.description}
-                                onChange={(e) => setNewTask({...newTask, description: e.target.value})}
+                                onChange={(e) => setNewTask({
+                                    ...newTask,
+                                    description: e.target.value
+                                })}
                             />
 
                             <input
                                 type="date"
                                 className="modal-input"
                                 value={newTask.deadline}
-                                onChange={(e) => setNewTask({...newTask, deadline: e.target.value})}
+                                onChange={(e) => setNewTask({
+                                    ...newTask,
+                                    deadline: e.target.value
+                                })}
                             />
 
                             <select
                                 className="modal-input"
                                 value={newTask.assignee}
-                                onChange={(e) => setNewTask({...newTask, assignee: e.target.value})}
+                                onChange={(e) => setNewTask({
+                                    ...newTask,
+                                    assignee: e.target.value
+                                })}
                             >
                                 <option value="">Выберите исполнителя</option>
                                 {members.map(member => (

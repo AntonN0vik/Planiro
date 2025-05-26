@@ -223,6 +223,7 @@ body {
     margin: 0 auto 20px;
     color: #16a34a;
 }
+
 .form-input {
     padding: 12px 14px;
     border: 1px solid #d1d5db;
@@ -288,6 +289,7 @@ body {
     border-top: 1px solid #e5e7eb;
     padding-top: 30px;
 }
+
 /* Обновленные стили для компонента TeamBoard */
 .team-board {
     display: flex;
@@ -637,7 +639,7 @@ body {
     border-radius: 8px;
     padding: 12px;
     margin: 8px 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -665,13 +667,13 @@ body {
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 12px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
     border-left: 4px solid #4f46e5;
     transition: all 0.2s;
 }
 
 .task-card:hover {
-    box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
 }
 
 .task-card h5 {
@@ -695,8 +697,14 @@ body {
 
 /* Анимация появления карточки */
 @keyframes cardAppear {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .task-card {
@@ -747,4 +755,13 @@ task-board {
 
 body::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
+}
+
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 1.5rem;
+    color: #666;
 }
