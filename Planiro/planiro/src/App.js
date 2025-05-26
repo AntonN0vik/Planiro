@@ -49,7 +49,7 @@ function App() {
                     path="/team-board"
                     element={
                         isAuthenticated ? (
-                            <TeamBoard isTeamLead={localStorage.getItem('isTeamLead') === 'true'} />
+                            <TeamBoard/>
                         ) : (
                             <Navigate to="/auth" />
                         )
