@@ -1,6 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planiro", "Planiro\Planiro.csproj", "{B57F1CA2-3132-496D-845A-4822F2495B64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planiro.Tests", "Planiro.Tests\Planiro.Tests.csproj", "{BF14CBF5-83F3-41D9-B4F0-196E182C9A15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +15,9 @@ Global
 		{B57F1CA2-3132-496D-845A-4822F2495B64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B57F1CA2-3132-496D-845A-4822F2495B64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B57F1CA2-3132-496D-845A-4822F2495B64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF14CBF5-83F3-41D9-B4F0-196E182C9A15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF14CBF5-83F3-41D9-B4F0-196E182C9A15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF14CBF5-83F3-41D9-B4F0-196E182C9A15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF14CBF5-83F3-41D9-B4F0-196E182C9A15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
