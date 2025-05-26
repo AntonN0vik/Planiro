@@ -49,11 +49,11 @@ public class TeamsController : ControllerBase
         try
         {
             var joinRequest = new JoinTeamRequest(
-                Code: request.Code.Replace("-", ""),
+                Code: request.Code.Remove(4,1),
                 Username: request.Username);
 
             var teamId = await _teamAuthService.AuthorizeTeamAndGetId(joinRequest);
-            await _plannerService.CreatePlanner(request.Code, request.Username);
+            await _plannerService.CreatePlanner(request.Code.Remove(4,1), request.Username);
             return Ok(new
             {
                 message = "Успешное подключение к команде",
