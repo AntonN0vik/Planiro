@@ -189,9 +189,9 @@ const TeamBoard = () => {
 
             const response = await axios.post(`${API_URL}/Tasks/${current_teamId}`, {
                 ...newTask,
-                status: 'To Do', // Добавлено
+                status: 'ToDo', // Добавлено
             });
-
+            console.log('Created task:', response.data);
             setTasks([...tasks, response.data]);
             setShowTaskModal(false);
             setNewTask({
@@ -222,7 +222,7 @@ const TeamBoard = () => {
         return tasks.filter(task =>
             task.status === column &&
             (viewMode === 'all' ||
-                (viewMode === 'my' && task.assignee === 'current-user-id') ||
+                (viewMode === 'my' && task.assignee === localStorage.getItem("userId")) ||
                 (viewMode === 'user' && task.assignee === 'selected-user-id')))
     };
 
@@ -233,8 +233,8 @@ const TeamBoard = () => {
             setShowTaskModal(false);
         }
     };
-
-    const columns = ['To Do', 'Doing', 'Checking', 'Done'];
+    
+    const columns = ['ToDo', 'InProgress', 'OnChecking', 'Done'];
 
     return (
         <div className="team-board">

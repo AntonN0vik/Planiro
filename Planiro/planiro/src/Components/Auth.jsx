@@ -114,7 +114,8 @@ const Auth = ({ setIsAuthenticated }) => {
       if (!isRegistering) {
         setIsAuthenticated(true);
         localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('username', formData.username); 
+        localStorage.setItem('username', formData.username);
+        localStorage.setItem('userId', data.userId);
         navigate('/dev-team');
       }
 
