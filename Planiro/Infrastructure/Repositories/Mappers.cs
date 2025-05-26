@@ -7,13 +7,15 @@ namespace Planiro.Infrastructure.Repositories;
 public class Mappers
 {	
 	public static TaskEntity MapTaskToEntity(Task task)
-	{
+	{	
 		return new TaskEntity
 		{
 			Id = task.Id,
 			Title = task.Title,
 			Description = task.Description,
-			Deadline = task.Deadline,
+			Deadline = task.Deadline?.Kind == DateTimeKind.Utc 
+				? task.Deadline 
+				: task.Deadline?.ToUniversalTime(),
 			State = task.State.ToString(),
 			IsApproved = task.IsApproved,
 			PlannerId = task.PlannerId
@@ -24,14 +26,18 @@ public class Mappers
 	{
 		Task.States state;
 		Enum.TryParse(entity.State, out state);
-
+		var deadline = entity.Deadline?.Kind == DateTimeKind.Utc
+			? entity.Deadline
+			: entity.Deadline != null 
+				? DateTime.SpecifyKind(entity.Deadline.Value, DateTimeKind.Utc)
+				: null;
 		return new Task
 		(
 			entity.Id,
 			entity.Title,
 			entity.Description,
 			state,
-			entity.Deadline,
+			deadline,
 			entity.PlannerId,
 			entity.IsApproved
 		);

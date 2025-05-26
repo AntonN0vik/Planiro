@@ -53,7 +53,7 @@ public class TeamsController : ControllerBase
                 Username: request.Username);
 
             var teamId = await _teamAuthService.AuthorizeTeamAndGetId(joinRequest);
-            await _plannerService.CreatePlanner(request.Code, request.Username);
+            await _plannerService.CreatePlanner(request.Code.Replace("-", ""), request.Username);
             return Ok(new
             {
                 message = "Успешное подключение к команде",
