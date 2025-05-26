@@ -94,10 +94,11 @@ const DroppableColumn = ({column, tasks, members}) => {
 };
 
 
-const TeamBoard = ({isTeamLead}) => {
+const TeamBoard = () => {
     const [tasks, setTasks] = useState([]);
     const [members, setMembers] = useState([]);
     const [viewMode, setViewMode] = useState('my');
+    const [isTeamLead, setIsTeamLead] = useState(false);
     const [showCodeModal, setShowCodeModal] = useState(false);
     const [showTaskModal, setShowTaskModal] = useState(false);
     const [activeTask, setActiveTask] = useState(null);
@@ -108,6 +109,7 @@ const TeamBoard = ({isTeamLead}) => {
         deadline: '',
         status: ''
     });
+    const [joinCode, setJoinCode] = useState('');
 
     // Настройка сенсоров для drag & drop
     const sensors = useSensors(
@@ -123,11 +125,19 @@ const TeamBoard = ({isTeamLead}) => {
         const loadData = async () => {
             try {
                 const teamId = localStorage.getItem('teamId');
-                const response = await axios.get(`${API_URL}/Teams/${teamId}`);
-                setTasks(response.data.tasks);
-                setMembers(response.data.members);
+                const userId = localStorage.getItem('userId');
+
+                const teamResponse = await axios.get(`${API_URL}/Teams/${teamId}`);
+                const { tasks, members, lead, joinCode } = teamResponse.data;
+
+                setTasks(tasks);
+                setMembers(members);
+                setIsTeamLead(lead === userId);
+                setJoinCode(joinCode); // Сохраняем код команды в состоянии
+
             } catch (error) {
                 console.error('Ошибка загрузки данных:', error);
+                setIsTeamLead(false);
             }
         };
         loadData();
@@ -179,9 +189,9 @@ const TeamBoard = ({isTeamLead}) => {
 
             const response = await axios.post(`${API_URL}/Tasks/${current_teamId}`, {
                 ...newTask,
-                status: 'To Do', // Добавлено
+                status: 'ToDo', // Добавлено
             });
-
+            console.log('Created task:', response.data);
             setTasks([...tasks, response.data]);
             setShowTaskModal(false);
             setNewTask({
@@ -212,7 +222,7 @@ const TeamBoard = ({isTeamLead}) => {
         return tasks.filter(task =>
             task.status === column &&
             (viewMode === 'all' ||
-                (viewMode === 'my' && task.assignee === 'current-user-id') ||
+                (viewMode === 'my' && task.assignee === localStorage.getItem("userId")) ||
                 (viewMode === 'user' && task.assignee === 'selected-user-id')))
     };
 
@@ -223,8 +233,8 @@ const TeamBoard = ({isTeamLead}) => {
             setShowTaskModal(false);
         }
     };
-
-    const columns = ['To Do', 'Doing', 'Checking', 'Done'];
+    
+    const columns = ['ToDo', 'InProgress', 'OnChecking', 'Done'];
 
     return (
         <div className="team-board">
@@ -319,8 +329,7 @@ const TeamBoard = ({isTeamLead}) => {
             {showCodeModal && (
                 <div className="modal" onClick={handleModalClick}>
                     <div className="modal-content code-modal">
-                        <h3>Код
-                            команды: {localStorage.getItem('teamCode')}</h3>
+                        <h3>Код команды: {joinCode}</h3> {/* Используем состояние вместо localStorage */}
                         <button
                             className="modal-btn primary"
                             onClick={() => setShowCodeModal(false)}
