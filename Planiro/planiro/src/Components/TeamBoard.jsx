@@ -38,8 +38,7 @@ const SortableTask = ({task, members}) => {
         cursor: 'grab',
         opacity: isDragging ? 0.5 : 1
     };
-
-    // Находим имя исполнителя
+    
     const assigneeName = members.find(m => m.id === task.assignee)?.name || 'Не назначен';
 
     return (
@@ -60,7 +59,6 @@ const SortableTask = ({task, members}) => {
     );
 };
 
-// Компонент для области сброса (колонки)
 const DroppableColumn = ({column, tasks, members}) => {
     const {setNodeRef, isOver} = useDroppable({
         id: column
@@ -110,8 +108,8 @@ const TeamBoard = () => {
         status: ''
     });
     const [joinCode, setJoinCode] = useState('');
-
-    // Настройка сенсоров для drag & drop
+    const [selectedUserId, setSelectedUserId] = useState(null);
+    
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
@@ -119,8 +117,7 @@ const TeamBoard = () => {
             },
         })
     );
-
-    // Загрузка данных
+    
     useEffect(() => {
         const loadData = async () => {
             try {
@@ -133,7 +130,7 @@ const TeamBoard = () => {
                 setTasks(tasks);
                 setMembers(members);
                 setIsTeamLead(lead === userId);
-                setJoinCode(joinCode); // Сохраняем код команды в состоянии
+                setJoinCode(joinCode);
 
             } catch (error) {
                 console.error('Ошибка загрузки данных:', error);
@@ -141,22 +138,20 @@ const TeamBoard = () => {
             }
         };
         loadData();
-    }, []);
-
-    // Обработка начала перетаскивания
+    },  []);
+    
     const handleDragStart = (event) => {
         const {active} = event;
         const task = tasks.find(t => t.id === active.id);
         setActiveTask(task);
     };
-
-    // Обработка окончания перетаскивания
+    
     const handleDragEnd = async (event) => {
         const {active, over} = event;
         setActiveTask(null);
 
         if (!over || activeTask.status === over.id) {
-            return; // Ничего не делаем
+            return; 
         }
 
         const taskId = active.id;
@@ -164,32 +159,30 @@ const TeamBoard = () => {
 
         const originalTasks = [...tasks];
         try {
-            // Оптимистичное обновление
             const updatedTasks = tasks.map(t =>
                 t.id === taskId ? {...t, status: targetColumn} : t
             );
             setTasks(updatedTasks);
             let current_teamId = localStorage.getItem('teamId')
-
-            // Отправка запроса
+            
             await axios.put(`${API_URL}/Tasks/${current_teamId}/${taskId}`, {
                 ...tasks.find(t => t.id === taskId),
-                status: targetColumn // Добавлено
+                status: targetColumn 
             });
         } catch (error) {
             console.error('Ошибка перемещения задачи:', error);
-            setTasks(originalTasks); // Откат при ошибке
+            setTasks(originalTasks); 
         }
     };
 
-    // Создание задачи
+
     const handleCreateTask = async () => {
         try {
             let current_teamId = localStorage.getItem('teamId')
 
             const response = await axios.post(`${API_URL}/Tasks/${current_teamId}`, {
                 ...newTask,
-                status: 'ToDo', // Добавлено
+                status: 'ToDo',
             });
             console.log('Created task:', response.data);
             setTasks([...tasks, response.data]);
@@ -212,27 +205,38 @@ const TeamBoard = () => {
             let current_teamId = localStorage.getItem('teamId')
             await axios.delete(`${API_URL}/Members/${current_teamId}/${memberId}`);
             setMembers(members.filter(m => m.id !== memberId));
+
+            if (memberId === selectedUserId) {
+                setSelectedUserId(null);
+            }
         } catch (error) {
             console.error('Ошибка удаления участника:', error);
         }
     };
 
-    // Фильтрация задач
+
     const getTasksByColumn = (column) => {
+        const userId = localStorage.getItem('userId');
+
         return tasks.filter(task =>
             task.status === column &&
             (viewMode === 'all' ||
-                (viewMode === 'my' && task.assignee === localStorage.getItem("userId")) ||
-                (viewMode === 'user' && task.assignee === 'selected-user-id')))
+                (viewMode === 'my' && task.assignee === userId) ||
+                (viewMode === 'user' && task.assignee === selectedUserId)))
     };
 
-    // Закрытие модалок
+
     const handleModalClick = (e) => {
         if (e.target.classList.contains('modal')) {
             setShowCodeModal(false);
             setShowTaskModal(false);
         }
     };
+    const formatJoinCode = (code) => {
+        if (!code) return '';
+        return code.replace(/(\w{4})(\w{4})/, '$1-$2');
+    };
+    
     
     const columns = ['ToDo', 'InProgress', 'OnChecking', 'Done'];
 
@@ -240,15 +244,35 @@ const TeamBoard = () => {
         <div className="team-board">
             {/* Верхняя панель */}
             <div className="top-panel">
-                <select
-                    value={viewMode}
-                    onChange={(e) => setViewMode(e.target.value)}
-                    className="view-selector"
-                >
-                    <option value="my">Мои задачи</option>
-                    <option value="all">Все задачи</option>
-                    <option value="user">Задачи пользователя</option>
-                </select>
+                <div className="view-controls">
+                    <select
+                        value={viewMode}
+                        onChange={(e) => {
+                            setViewMode(e.target.value);
+                            setSelectedUserId(null); 
+                        }}
+                        className="view-selector"
+                    >
+                        <option value="my">Мои задачи</option>
+                        <option value="all">Все задачи</option>
+                        <option value="user">Задачи пользователя</option>
+                    </select>
+
+                    {viewMode === 'user' && (
+                        <select
+                            value={selectedUserId || ''}
+                            onChange={(e) => setSelectedUserId(e.target.value)}
+                            className="user-selector"
+                        >
+                            <option value="">Выберите участника</option>
+                            {members.map(member => (
+                                <option key={member.id} value={member.id}>
+                                    {member.name}
+                                </option>
+                            ))}
+                        </select>
+                    )}
+                </div>
 
                 {isTeamLead && (
                     <div className="team-lead-controls">
@@ -329,7 +353,7 @@ const TeamBoard = () => {
             {showCodeModal && (
                 <div className="modal" onClick={handleModalClick}>
                     <div className="modal-content code-modal">
-                        <h3>Код команды: {joinCode}</h3> {/* Используем состояние вместо localStorage */}
+                        <h3>Код команды: {formatJoinCode(joinCode)}</h3>
                         <button
                             className="modal-btn primary"
                             onClick={() => setShowCodeModal(false)}
