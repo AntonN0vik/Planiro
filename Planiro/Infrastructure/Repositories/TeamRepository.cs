@@ -3,7 +3,9 @@ using Planiro.Domain.Entities;
 using Planiro.Domain.IRepositories;
 using Planiro.Infrastructure.Data.Configurations;
 using Planiro.Infrastructure.Data.Entities;
+
 using Task = System.Threading.Tasks.Task;
+using TaskDomain = Planiro.Domain.Entities.Task;
 
 namespace Planiro.Infrastructure.Repositories;
 
@@ -61,9 +63,14 @@ public class TeamRepository : ITeamRepository
 		return planner.Id;
 	}
 
-	public Task<ICollection<Domain.Entities.Task>> GetTasksByTeamIdAsync(Guid teamId)
+	public async Task<ICollection<TaskDomain>> GetTasksByTeamIdAsync(Guid teamId)
 	{
-		throw new NotImplementedException();
+		var tasks = await _dbContext.Tasks!
+			.Include(t => t.Planner)
+			.Where(t => t.Planner.TeamId == teamId)
+			.ToListAsync();
+
+		return tasks.Select(Mappers.MapTaskToDomain).ToList();
 	}
 
 	public  async Task<User?> GetTeamleadByIdAsync(Guid teamId)
