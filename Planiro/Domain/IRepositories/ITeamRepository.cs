@@ -11,7 +11,7 @@ public interface ITeamRepository
 
     Task<ICollection<User>> GetUsersAsync(Guid teamId);
     
-    Task<string> GetJoinCodeAsync(Guid teamleadId);
+    Task<string> GetJoinCodeAsync(Guid teamId);
     
     Task<Guid> GetTeamIdByJoinCodeAsync(string joinCode);
     
@@ -21,8 +21,8 @@ public interface ITeamRepository
     
     Task<ICollection<TaskDomain>> GetTasksByTeamIdAsync(Guid teamId); 
     
-    Task<User?> GetTeamleadByIdAsync(Guid teamId);
-    // ищет в бд команду по коду вступления, берет id тимлида,
+    Task<User> GetTeamleadByIdAsync(Guid teamId);
+    // ищет в бд команду по коду вступления, берет id тимы,
     // идет в таблицу юзеров и находит тимлида
 
     Task SaveTeamAsync(Team team);

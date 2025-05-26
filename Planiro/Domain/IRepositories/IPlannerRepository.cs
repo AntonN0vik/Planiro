@@ -7,4 +7,5 @@ namespace Planiro.Domain.IRepositories;
 public interface IPlannerRepository
 {
     public Task CreatePlanner(Guid userId, Guid teamId, Guid plannerId);
+    public bool IsPlannerExists(Guid userId, Guid teamId);
 }

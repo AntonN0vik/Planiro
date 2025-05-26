@@ -39,4 +39,14 @@ namespace Planiro.Application.Services;
             return await _teamRepository.GetTasksByTeamIdAsync(teamId);
         }
 
+        public async Task<Guid> GetTeamLeadIdAsync(Guid teamId)
+        {
+            var teamlead = await _teamRepository.GetTeamleadByIdAsync(teamId);
+            return teamlead.Id;
+        }
+
+        public async Task<string> GetJoinCodeByTeamIdAsync(Guid teamId)
+        {
+            return await _teamRepository.GetJoinCodeAsync(teamId);
+        }
     }
