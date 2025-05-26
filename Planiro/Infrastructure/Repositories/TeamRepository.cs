@@ -33,10 +33,10 @@ public class TeamRepository : ITeamRepository
 		return entity.Users.Select(Mappers.MapUserToDomain).ToList();
 	}
 	
-	public async Task<string?> GetJoinCodeAsync(Guid teamleadId)
+	public async Task<string> GetJoinCodeAsync(Guid teamId)
 	{
 		var team = await _dbContext.Teams!
-			.FirstOrDefaultAsync(t => t.TeamleadId == teamleadId);
+			.FirstOrDefaultAsync(t => t.Id == teamId);
 
 		return team?.JoinCode;
 	}
@@ -73,7 +73,7 @@ public class TeamRepository : ITeamRepository
 		return tasks.Select(Mappers.MapTaskToDomain).ToList();
 	}
 
-	public  async Task<User?> GetTeamleadByIdAsync(Guid teamId)
+	public  async Task<User> GetTeamleadByIdAsync(Guid teamId)
 	{
 		var team = await _dbContext.Teams!
 			.FirstOrDefaultAsync(t => t.Id == teamId);

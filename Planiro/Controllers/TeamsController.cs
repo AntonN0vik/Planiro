@@ -75,17 +75,20 @@ public class TeamsController : ControllerBase
     [HttpGet("{teamId}")]
     public async Task<IActionResult> GetTeamData(string teamId)
     {
-        //TODO 
         try
         {
             var newTeamId = Guid.Parse(teamId);
             var members = await _teamService.GetTeamMembersAsync(newTeamId);
+            var teamleadId = await _teamService.GetTeamLeadIdAsync(newTeamId);
             var enumerable = members.ToList();
+            var joinCode = await _teamService.GetJoinCodeByTeamIdAsync(newTeamId);
             if (enumerable.Count == 0)
                 return Ok(new
                 {
                     tasks = new List<TaskShema>(),
-                    members = new List<Member>()
+                    members = new List<Member>(),
+                    lead = teamleadId,
+                    joinCode = joinCode
                 });
             var connectPlannersUsers = enumerable?.Select(x => (x.Id, x.Planners));
             var newMembers = (from member in enumerable
@@ -107,7 +110,9 @@ public class TeamsController : ControllerBase
             return Ok(new
             {
                 tasks = newTasks,
-                members = newMembers
+                members = newMembers,
+                lead = teamleadId,
+                joinCode = joinCode
             });
         }
         catch (ArgumentException ex)
