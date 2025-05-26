@@ -9,8 +9,8 @@ namespace Planiro.Controllers;
 [Route("api/[controller]")]
 public class MembersController(TeamService teamService) : ControllerBase
 {
-    // DELETE: api/members/{memberId}
-    [HttpDelete("{memberId}")]
+    // DELETE: api/members/{teamId}/{memberId}
+    [HttpDelete("{teamId}/{memberId}")]
     public IActionResult DeleteMember(string memberId, string teamId)
     {
         //TODO 

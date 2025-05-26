@@ -13,11 +13,12 @@ namespace Planiro.Controllers;
 public class TasksController(TaskService taskService, TeamService teamService) : ControllerBase
 {
     private readonly TeamService _teamService = teamService;
+    private readonly TaskService _taskService = taskService;
 
 
-    // PUT: api/tasks/{taskId}
-    [HttpPut("{taskId}")]
-    public async Task<IActionResult> UpdateTask(string taskId, [FromBody] TaskShema updatedTask, string teamId)
+    // PUT: api/tasks/{teamId}/{taskId}"
+    [HttpPut("{teamId}/{taskId}")]
+    public async Task<IActionResult> UpdateTask([FromBody] TaskShema updatedTask, string teamId, string taskId)
     {
         try
         {
@@ -30,7 +31,8 @@ public class TasksController(TaskService taskService, TeamService teamService) :
             var plannerId = await _teamService.GetPlannerIdAsync(newTeamId, newUserId);
             var newStatus = Enum.Parse<Task.States>(updatedTask.Status);
             var task = new Task(newTaskId, newTitle, newDescription, newStatus, newDeadline, plannerId);
-            await taskService.UpdateTaskAsync(task);
+            await _taskService.UpdateTaskAsync(task);
+
             return Ok(updatedTask);
         }
         catch (ArgumentException ex)
@@ -40,8 +42,8 @@ public class TasksController(TaskService taskService, TeamService teamService) :
     }
 
 
-    // POST: api/tasks
-    [HttpPost]
+    // POST: api/tasks/{teamId}
+    [HttpPost("{teamId}")]
     public async Task<IActionResult> CreateTask([FromBody] TaskRequest request, string teamId)
     {
         try
@@ -53,18 +55,30 @@ public class TasksController(TaskService taskService, TeamService teamService) :
             var newTeamId = Guid.Parse(teamId);
             var newUserId = Guid.Parse(request.Assignee);
             var plannerId = await _teamService.GetPlannerIdAsync(newTeamId, newUserId);
-            
-            var newTask = new Task(taskId, title, description, 
-                Task.States.ToDo, deadline, plannerId);
-            
-            return Ok(newTask);
+            var status = Task.States.ToDo;
+            var newTask = new Task(taskId, title, description,
+                status, deadline, plannerId);
+            await _taskService.CreateTaskAsync(newTask);
+            var responseTask = new TaskShema(
+                taskId.ToString(),
+                title,
+                description,
+                status.ToString(),
+                request.Assignee,
+                request.Deadline);
+
+            return Ok(responseTask);
         }
         catch (ArgumentException ex)
         {
-            return Conflict(ex);
+            Console.WriteLine(ex.Message);
+            return Conflict();
         }
-
-        
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Conflict();
+        }
     }
 
     [HttpGet("{*url}")]

@@ -36,7 +36,8 @@ public record TaskRequest(
     [Required] string Title,
     [Required] string Description,
     [Required] string Assignee,
-    [Required] string Deadline
+    [Required] string Deadline,
+    [Required] string Status
 );
 
 public record Member(

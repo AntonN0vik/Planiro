@@ -37,8 +37,10 @@ builder.Services.AddScoped<UserAuthorizationService>();
 builder.Services.AddScoped<TeamAuthorizationService>();
 builder.Services.AddScoped<TeamService>();
 builder.Services.AddScoped<TaskService>();
+builder.Services.AddScoped<PlannerService>();
 builder.Services.AddScoped<PasswordHasher>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
+builder.Services.AddScoped<IPlannerRepository, PlannerRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 

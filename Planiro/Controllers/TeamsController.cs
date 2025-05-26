@@ -11,11 +11,13 @@ public class TeamsController : ControllerBase
 {
     private readonly TeamAuthorizationService _teamAuthService;
     private readonly TeamService _teamService;
+    private readonly PlannerService _plannerService;
 
-    public TeamsController(TeamAuthorizationService teamAuthService, TeamService teamService)
+    public TeamsController(TeamAuthorizationService teamAuthService, TeamService teamService, PlannerService plannerService)
     {
         _teamAuthService = teamAuthService;
         _teamService = teamService;
+        _plannerService = plannerService;
     }
 
     [HttpPost("create")]
@@ -51,7 +53,7 @@ public class TeamsController : ControllerBase
                 Username: request.Username);
 
             var teamId = await _teamAuthService.AuthorizeTeamAndGetId(joinRequest);
-
+            await _plannerService.CreatePlanner(request.Code, request.Username);
             return Ok(new
             {
                 message = "Успешное подключение к команде",
@@ -110,12 +112,12 @@ public class TeamsController : ControllerBase
         }
         catch (ArgumentException ex)
         {
-            Console.WriteLine(ex);
+            Console.WriteLine(ex.Message);
             return Conflict();
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            Console.WriteLine(ex.Message);
             return Conflict();
         }
     }

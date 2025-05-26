@@ -104,8 +104,9 @@ const TeamBoard = ({isTeamLead}) => {
     const [newTask, setNewTask] = useState({
         title: '',
         description: '',
+        assignee: '',
         deadline: '',
-        assignee: ''
+        status: ''
     });
 
     // Настройка сенсоров для drag & drop
@@ -158,12 +159,12 @@ const TeamBoard = ({isTeamLead}) => {
                 t.id === taskId ? {...t, status: targetColumn} : t
             );
             setTasks(updatedTasks);
+            let current_teamId = localStorage.getItem('teamId')
 
             // Отправка запроса
-            await axios.put(`${API_URL}/Tasks/${taskId}`, {
+            await axios.put(`${API_URL}/Tasks/${current_teamId}/${taskId}`, {
                 ...tasks.find(t => t.id === taskId),
-                status: targetColumn,
-                teamId: localStorage.getItem('teamId') // Добавлено
+                status: targetColumn // Добавлено
             });
         } catch (error) {
             console.error('Ошибка перемещения задачи:', error);
@@ -174,10 +175,11 @@ const TeamBoard = ({isTeamLead}) => {
     // Создание задачи
     const handleCreateTask = async () => {
         try {
-            const response = await axios.post(`${API_URL}/Tasks`, {
+            let current_teamId = localStorage.getItem('teamId')
+
+            const response = await axios.post(`${API_URL}/Tasks/${current_teamId}`, {
                 ...newTask,
-                status: 'To Do',
-                teamId: localStorage.getItem('teamId') // Добавлено
+                status: 'To Do', // Добавлено
             });
 
             setTasks([...tasks, response.data]);
@@ -185,8 +187,9 @@ const TeamBoard = ({isTeamLead}) => {
             setNewTask({
                 title: '',
                 description: '',
+                assignee: '',
                 deadline: '',
-                assignee: ''
+                status: ''
             });
         } catch (error) {
             console.error('Ошибка создания задачи:', error);
@@ -196,11 +199,8 @@ const TeamBoard = ({isTeamLead}) => {
     // Удаление участника
     const handleRemoveMember = async (memberId) => {
         try {
-            await axios.delete(`${API_URL}/Members/${memberId}`, {
-                data: {
-                    teamId: localStorage.getItem('teamId')
-                }
-            });
+            let current_teamId = localStorage.getItem('teamId')
+            await axios.delete(`${API_URL}/Members/${current_teamId}/${memberId}`);
             setMembers(members.filter(m => m.id !== memberId));
         } catch (error) {
             console.error('Ошибка удаления участника:', error);
