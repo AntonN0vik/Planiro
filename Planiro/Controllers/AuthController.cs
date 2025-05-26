@@ -37,7 +37,10 @@ public class AuthController : ControllerBase
         try
         {
             await _userService.AuthorizeUser(request);
-            return Ok(new { Message = "Login successful" });
+            var userId=await _userService.GetUserIdByUserName(request.Username);
+            var userName=request.Username;
+            
+            return Ok(new { Message = "Login successful", userId=userId.ToString()});
         }
         catch (ArgumentException ex)
         {

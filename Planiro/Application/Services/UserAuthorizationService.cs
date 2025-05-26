@@ -45,4 +45,10 @@ public class UserAuthorizationService
         if (checkedPassword)
             throw new ArgumentException("Invalid username or password");
     }
+
+    public async Task<Guid> GetUserIdByUserName(string username)
+    {
+        var user= await _userRepository.GetUserByUserNameAsync(username);
+        return user.Id;
+    }
 }
