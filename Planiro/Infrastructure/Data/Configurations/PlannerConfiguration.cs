@@ -9,7 +9,8 @@ public class PlannerConfiguration: IEntityTypeConfiguration<PlannerEntity>
     public void Configure(EntityTypeBuilder<PlannerEntity> builder)
     {
         builder.HasKey(p => p.Id);
-
+        builder.HasIndex(p => new { p.UserId, p.TeamId });
+        
         builder.HasOne(p => p.User)
             .WithMany(u => u.Planners)
             .HasForeignKey(p => p.UserId)

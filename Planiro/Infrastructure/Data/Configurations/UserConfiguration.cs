@@ -10,13 +10,11 @@ public class UserConfiguration: IEntityTypeConfiguration<UserEntity>
     {
         builder.HasKey(u => u.Id);
 
-        // Связь с Planer (1 User -> Many Planers)
         builder.HasMany(u => u.Planners)
             .WithOne(p => p.User)
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Связь Many-to-Many с Team
         builder.HasMany(u => u.Teams)
             .WithMany(t => t.Users)
             .UsingEntity(j => j.ToTable("TeamUsers"));

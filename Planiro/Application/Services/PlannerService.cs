@@ -8,7 +8,7 @@ public class PlannerService(IPlannerRepository plannerRepository, IUserRepositor
         var plannerId = Guid.NewGuid();
         var user = await userRepository.GetUserByUserNameAsync(userName);
         var teamId = await teamRepository.GetTeamIdByJoinCodeAsync(joinCode);
-        if (plannerRepository.IsPlannerExists(user.Id, teamId))
+        if (await plannerRepository.IsPlannerExists(user.Id, teamId))
             return;
         await plannerRepository.CreatePlanner(user.Id, teamId, plannerId);
     }

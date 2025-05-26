@@ -10,6 +10,11 @@ public class TaskConfiguration : IEntityTypeConfiguration<TaskEntity>
     {
         builder.HasKey(t => t.Id);
         
+        builder.HasIndex(t => t.State);
+        builder.HasIndex(t => t.Deadline);
+        builder.HasIndex(t => t.Title);
+        builder.HasIndex(t => new { t.PlannerId, t.State });
+        
         builder.HasOne(t => t.Planner)
             .WithMany(p => p.Tasks)
             .HasForeignKey(t => t.PlannerId)

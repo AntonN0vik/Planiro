@@ -1,4 +1,6 @@
-﻿namespace Planiro.Infrastructure.Data.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Planiro.Infrastructure.Data.Entities;
 
 public class TaskEntity
 {
@@ -11,5 +13,6 @@ public class TaskEntity
     public bool IsApproved { get; set; }
     
     public Guid PlannerId{ get; set; }
-    public PlannerEntity? Planner { get; set; }
+    [ForeignKey("PlannerId")]
+    public PlannerEntity Planner { get; set; }
 }

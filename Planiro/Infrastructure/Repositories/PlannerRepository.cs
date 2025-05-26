@@ -1,4 +1,5 @@
-﻿using Planiro.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Planiro.Domain.Entities;
 using Planiro.Domain.IRepositories;
 using Planiro.Infrastructure.Data.Configurations;
 using Planiro.Infrastructure.Data.Entities;
@@ -15,16 +16,24 @@ public class PlannerRepository : IPlannerRepository
         _dbContext = dbContext;
     }
     
-    public async Task CreatePlanner(Guid teamId, Guid userId, Guid plannerId)
+    public async Task CreatePlanner(Guid userId, Guid teamId, Guid plannerId)
     {
         var planner = new PlannerEntity
         {
             Id = plannerId,
             UserId = userId,
-            TeamId = teamId
+            TeamId = teamId,
+            Tasks = new List<TaskEntity>()
         };
 
         _dbContext.Planners.Add(planner);
         await _dbContext.SaveChangesAsync();
+    }
+    public async Task<bool> IsPlannerExists(Guid userId, Guid teamId)
+    {
+        var entity = await _dbContext.Planners!
+            .FirstOrDefaultAsync(p => p.UserId == userId && p.TeamId == teamId);
+    
+        return entity != null;
     }
 }
