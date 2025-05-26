@@ -37,7 +37,13 @@ public class TasksController(TaskService taskService, TeamService teamService) :
         }
         catch (ArgumentException ex)
         {
-            return Conflict(ex);
+            Console.WriteLine(ex.Message);
+            return Conflict();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return Conflict();
         }
     }
 

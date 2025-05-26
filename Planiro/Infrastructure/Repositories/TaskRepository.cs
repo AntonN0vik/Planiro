@@ -47,7 +47,9 @@ public class TaskRepository : ITaskRepository
 		{
 			entity.Title = task.Title;
 			entity.Description = task.Description;
-			entity.Deadline = task.Deadline;
+			entity.Deadline = task.Deadline?.Kind == DateTimeKind.Utc
+				? task.Deadline
+				: task.Deadline?.ToUniversalTime();
 			entity.State = task.State.ToString();
 			entity.IsApproved = task.IsApproved;
 			entity.PlannerId = task.PlannerId;

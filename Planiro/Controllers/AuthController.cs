@@ -4,15 +4,8 @@ using Planiro.Models;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController : ControllerBase
+public class AuthController(UserAuthorizationService _userService) : ControllerBase
 {
-    private readonly UserAuthorizationService _userService;
-
-    public AuthController(UserAuthorizationService userService)
-    {
-        _userService = userService;
-    }
-
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
